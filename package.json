@@ -6,21 +6,23 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --config jestconfig.json",
-    "prepare" : "npm run build",
-    "prepublishOnly" : "npm test && npm run lint",
-    "preversion" : "npm run lint",
-    "version" : "npm run format && git add -A src",
-    "postversion" : "git push && git push --tags"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ishinvin/ts-khqr.git"
   },
-  "keywords": ["Bakong", "KHQR"],
+  "keywords": [
+    "Bakong",
+    "KHQR"
+  ],
   "author": "Ishin Vin",
   "license": "ISC",
   "bugs": {
