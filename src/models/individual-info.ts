@@ -1,6 +1,7 @@
 import { KHQRData } from '../constants';
 
 type CurrencyType = typeof KHQRData.currency['usd'];
+
 export type OptionalDataType = {
     accountInformation?: string;
     acquiringBank?: string;
@@ -53,7 +54,7 @@ export class IndividualInfo {
         this.currency = currency || KHQRData.currency.khr;
         this.amount = amount;
         this.merchantName = merchantName;
-        this.merchantCity = merchantCity || 'Phnom Penh';
+        this.merchantCity = merchantCity || 'PHNOM PENH';
         this.billNumber = billNumber;
         this.storeLabel = storeLabel;
         this.terminalLabel = terminalLabel;

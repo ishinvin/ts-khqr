@@ -1,31 +1,45 @@
-type KHQRDataType = {
-    qr: string;
-    md5: string;
-};
-
 type KHQRErrorType = {
     code: number;
     message: string;
 };
 
-export type KHQRResponseType = {
+export type KHQRDataType = {
+    qr: string;
+    md5: string;
+};
+
+export type KHQRDecodeType = {
+    bakongAccountID: string | null;
+    accountInformation: string | null;
+    merchantID: string | null;
+    acquiringBank: string | null;
+    billNumber: string | null;
+    mobileNumber: string | null;
+    storeLabel: string | null;
+    terminalLabel: string | null;
+    timestamp: string | null;
+    merchantType: string | null;
+    payloadFormatIndicator: string | null;
+    pointofInitiationMethod: string | null;
+    merchantCategoryCode: string | null;
+    transactionCurrency: string | null;
+    transactionAmount: string | null;
+    countryCode: string | null;
+    merchantName: string | null;
+    merchantCity: string | null;
+    crc: string | null;
+};
+
+export type KHQRResponseType<T> = {
     status: {
         code: number;
         message: string | null;
         errorCode: number | null;
     };
-    data: KHQRDataType | null;
+    data: T;
 };
 
-/**
- * A function for returning the KHQR response
- * when error pass KHQRResponse(null, error)
- * when success pass KHQRResponse(data)
- * @param data
- * @param error
- * @returns
- */
-export const KHQRResponse = (data: KHQRDataType | null, error?: KHQRErrorType): KHQRResponseType => ({
+export const KHQRResponse = <T>(data: T, error?: KHQRErrorType): KHQRResponseType<T> => ({
     status: {
         code: error ? 1 : 0,
         errorCode: error ? error.code : null,
