@@ -85,7 +85,7 @@ export function generateKHQR(information: MerchantInfo, types: string): string {
         ];
 
         if (information.amount) {
-            let amountInput = '';
+            let amountInput = String(information.amount);
 
             if (Number(information.currency) === KHQRData.currency.khr) {
                 if (information.amount % 1 === 0) {
@@ -100,7 +100,7 @@ export function generateKHQR(information: MerchantInfo, types: string): string {
                     throw KHQRResponse(null, ERROR_CODE.TRANSACTION_AMOUNT_INVALID);
                 }
                 if (precision !== undefined) {
-                    amountInput = parseFloat(String(information.amount)).toFixed(2);
+                    amountInput = parseFloat(amountInput).toFixed(2);
                 }
             }
 

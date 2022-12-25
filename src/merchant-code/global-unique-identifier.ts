@@ -41,10 +41,10 @@ export class GlobalUniqueIdentifier extends TagLengthString {
             const merchantID = new MerchantID(EMV.MERCHANT_ACCOUNT_INFORMATION_MERCHANT_ID, obj.merchantID);
             const acquiringBank = new AcquiringBank(EMV.MERCHANT_ACCOUNT_INFORMATION_ACQUIRING_BANK, obj.acquiringBank);
 
-            if (obj.merchantID) {
+            if (obj.merchantID !== undefined && obj.merchantID !== null) {
                 globalUniqueIdentifier += merchantID.toString();
             }
-            if (obj.acquiringBank) {
+            if (obj.acquiringBank !== undefined && obj.acquiringBank !== null) {
                 globalUniqueIdentifier += acquiringBank.toString();
             }
 
@@ -58,7 +58,8 @@ export class GlobalUniqueIdentifier extends TagLengthString {
                 acquiringBank,
             };
         } else {
-            if (!StringUtils.isEmpty(obj.accountInformation)) {
+            // note: check like this for compatible with bakong-khqr sdk
+            if (obj.accountInformation !== undefined && obj.accountInformation !== null) {
                 const accInformation = new AccountInformation(
                     EMV.INDIVIDUAL_ACCOUNT_INFORMATION,
                     String(obj.accountInformation),
@@ -66,7 +67,7 @@ export class GlobalUniqueIdentifier extends TagLengthString {
                 globalUniqueIdentifier += accInformation.toString();
             }
 
-            if (!StringUtils.isEmpty(obj.acquiringBank)) {
+            if (obj.acquiringBank !== undefined && obj.acquiringBank !== null) {
                 const acquiringBank = new AcquiringBank(
                     EMV.MERCHANT_ACCOUNT_INFORMATION_ACQUIRING_BANK,
                     obj.acquiringBank,

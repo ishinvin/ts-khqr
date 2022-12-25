@@ -31,19 +31,21 @@ export class AdditionalData extends TagLengthString {
 
         // Create additional data tag by combine all three sub tags
         let additionalDataString = '';
-        if (!StringUtils.isEmpty(additionalData.billNumber)) {
+
+        // note: check like this for compatible with bakong-khqr sdk
+        if (additionalData.billNumber !== undefined && additionalData.billNumber !== null) {
             billNumber = new BillNumber(EMV.BILLNUMBER_TAG, additionalData.billNumber);
             additionalDataString += billNumber.toString();
         }
-        if (!StringUtils.isEmpty(additionalData.mobileNumber)) {
+        if (additionalData.mobileNumber !== undefined && additionalData.mobileNumber !== null) {
             mobileNumber = new MobileNumber(EMV.ADDITIONAL_DATA_FIELD_MOBILE_NUMBER, additionalData.mobileNumber);
             additionalDataString += mobileNumber.toString();
         }
-        if (!StringUtils.isEmpty(additionalData.storeLabel)) {
+        if (additionalData.storeLabel !== undefined && additionalData.storeLabel !== null) {
             storeLabel = new StoreLabel(EMV.STORELABEL_TAG, additionalData.storeLabel);
             additionalDataString += storeLabel.toString();
         }
-        if (!StringUtils.isEmpty(additionalData.terminalLabel)) {
+        if (additionalData.terminalLabel !== undefined && additionalData.terminalLabel !== null) {
             terminalLabel = new TerminalLabel(EMV.TERMINAL_TAG, additionalData.terminalLabel);
             additionalDataString += terminalLabel.toString();
         }

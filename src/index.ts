@@ -13,7 +13,7 @@ import { decode, verify } from './decode';
 import { generateKHQR } from './generate';
 import md5 from 'md5';
 
-export { IndividualInfo, MerchantInfo };
+export { IndividualInfo, MerchantInfo, KHQRData };
 export type { KHQRResponseType, KHQRDataType, KHQRDecodeType, OptionalDataType };
 
 export class BakongKHQR {
