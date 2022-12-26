@@ -23,9 +23,9 @@
     "url": "git+https://github.com/ishinvin/ts-khqr.git"
   },
   "keywords": [
-    "Bakong",
-    "KHQR",
-    "TypeScript KHQR"
+    "khqr",
+    "ts-khqr",
+    "typescript khqr"
   ],
   "author": "Ishin Vin",
   "license": "ISC",
