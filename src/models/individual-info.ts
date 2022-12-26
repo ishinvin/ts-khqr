@@ -54,7 +54,7 @@ export class IndividualInfo {
         this.currency = currency || KHQRData.currency.khr;
         this.amount = amount;
         this.merchantName = merchantName;
-        this.merchantCity = merchantCity || 'PHNOM PENH';
+        this.merchantCity = merchantCity || 'Phnom Penh';
         this.billNumber = billNumber;
         this.storeLabel = storeLabel;
         this.terminalLabel = terminalLabel;
