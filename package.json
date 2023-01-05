@@ -1,6 +1,6 @@
 {
   "name": "ts-khqr",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Bakong KHQR TypeScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
