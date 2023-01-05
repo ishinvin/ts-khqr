@@ -11,7 +11,7 @@ import {
 import { crc16, StringUtils } from './utils';
 import { decode, verify } from './decode';
 import { generateKHQR } from './generate';
-import md5 from 'md5';
+// import md5 from 'md5';
 
 export { IndividualInfo, MerchantInfo, KHQRData };
 export type { KHQRResponseType, KHQRDataType, KHQRDecodeType, OptionalDataType };
@@ -27,7 +27,7 @@ export class BakongKHQR {
             const khqr = generateKHQR(info as MerchantInfo, KHQRData.merchantType.individual);
             return KHQRResponse({
                 qr: khqr,
-                md5: md5(khqr),
+                // md5: md5(khqr),
             });
         } catch (error) {
             return error as KHQRResponseType<null>;
@@ -44,7 +44,7 @@ export class BakongKHQR {
             const khqr = generateKHQR(info as MerchantInfo, KHQRData.merchantType.merchant);
             return KHQRResponse({
                 qr: khqr,
-                md5: md5(khqr),
+                // md5: md5(khqr),
             });
         } catch (error) {
             return error as KHQRResponseType<null>;

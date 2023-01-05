@@ -5,7 +5,7 @@ type KHQRErrorType = {
 
 export type KHQRDataType = {
     qr: string;
-    md5: string;
+    // md5: string;
 };
 
 export type KHQRDecodeType = {
