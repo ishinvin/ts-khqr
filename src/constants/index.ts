@@ -13,7 +13,7 @@ import {
     TransactionCurrency,
     UnionpayMerchantAccount,
     MerchantInformationLanguageTemplate,
-} from '../merchant-code';
+} from '../models';
 
 export const EMV = Object.freeze({
     PAYLOAD_FORMAT_INDICATOR: '00',

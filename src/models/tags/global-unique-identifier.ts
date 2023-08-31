@@ -1,6 +1,7 @@
-import { EMV, ERROR_CODE } from '../constants';
-import { KHQRResponse, TagLengthString } from '../models';
-import { StringUtils } from '../utils';
+import { EMV, ERROR_CODE } from '../../constants';
+import { KHQRResponse } from '../khqr-response';
+import { StringUtils } from '../../utils';
+import { TagLengthString } from './base/tag-length-string';
 
 export type GlobalUniqueIdObjectType = {
     bakongAccountID: string;

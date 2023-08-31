@@ -1,12 +1,14 @@
-import { EMV, ERROR_CODE } from '../constants';
-import { KHQRResponse, TagLengthString } from '../models';
-import { StringUtils } from '../utils';
+import { EMV, ERROR_CODE } from '../../constants';
+import { KHQRResponse } from '../khqr-response';
+import { TagLengthString } from './base/tag-length-string';
+import { StringUtils } from '../../utils';
 
 export type AdditionalDataParamType = {
     billNumber?: string;
     mobileNumber?: string;
     storeLabel?: string;
     terminalLabel?: string;
+    purposeOfTransaction?: string;
 };
 
 type AdditionalDataType = {
@@ -14,6 +16,7 @@ type AdditionalDataType = {
     mobileNumber?: MobileNumber;
     storeLabel?: StoreLabel;
     terminalLabel?: TerminalLabel;
+    purposeOfTransaction?: PurposeOfTransaction;
 };
 
 export class AdditionalData extends TagLengthString {
@@ -21,6 +24,7 @@ export class AdditionalData extends TagLengthString {
     mobileNumber?: MobileNumber;
     storeLabel?: StoreLabel;
     terminalLabel?: TerminalLabel;
+    purposeOfTransaction?: PurposeOfTransaction;
     data: AdditionalDataType;
 
     constructor(tag: string, additionalData: AdditionalDataParamType = {}) {
@@ -28,6 +32,7 @@ export class AdditionalData extends TagLengthString {
         let mobileNumber;
         let storeLabel;
         let terminalLabel;
+        let purposeOfTransaction;
 
         // Create additional data tag by combine all three sub tags
         let additionalDataString = '';
@@ -49,6 +54,13 @@ export class AdditionalData extends TagLengthString {
             terminalLabel = new TerminalLabel(EMV.TERMINAL_TAG, additionalData.terminalLabel);
             additionalDataString += terminalLabel.toString();
         }
+        if (additionalData.purposeOfTransaction !== undefined && additionalData.purposeOfTransaction !== null) {
+            purposeOfTransaction = new PurposeOfTransaction(
+                EMV.PURPOSE_OF_TRANSACTION,
+                additionalData.purposeOfTransaction,
+            );
+            additionalDataString += purposeOfTransaction.toString();
+        }
 
         super(tag, additionalDataString);
 
@@ -57,11 +69,13 @@ export class AdditionalData extends TagLengthString {
         this.mobileNumber = mobileNumber;
         this.storeLabel = storeLabel;
         this.terminalLabel = terminalLabel;
+        this.purposeOfTransaction = purposeOfTransaction;
         this.data = {
             billNumber,
             mobileNumber,
             storeLabel,
             terminalLabel,
+            purposeOfTransaction,
         };
     }
 }
@@ -102,6 +116,14 @@ class MobileNumber extends TagLengthString {
             throw KHQRResponse(null, ERROR_CODE.MOBILE_NUMBER_LENGTH_INVALID);
         }
 
+        super(tag, String(value));
+    }
+}
+
+class PurposeOfTransaction extends TagLengthString {
+    constructor(tag: string, value?: string) {
+        if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.PURPOSE_OF_TRANSACTION)
+            throw KHQRResponse(null, ERROR_CODE.PURPOSE_OF_TRANSACTION_LENGTH_INVALID);
         super(tag, String(value));
     }
 }

@@ -1,4 +1,4 @@
-import { TagLengthString } from '../models';
+import { TagLengthString } from './base/tag-length-string';
 
 export class TimeStamp extends TagLengthString {
     constructor(tag: string) {

@@ -1,6 +1,7 @@
-import { ERROR_CODE } from '../constants';
-import { KHQRResponse, TagLengthString } from '../models';
-import { StringUtils } from '../utils';
+import { ERROR_CODE } from '../../constants';
+import { KHQRResponse } from '../khqr-response';
+import { StringUtils } from '../../utils';
+import { TagLengthString } from './base/tag-length-string';
 
 export class PointOfInitiationMethod extends TagLengthString {
     constructor(tag: string, value: string) {
