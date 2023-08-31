@@ -449,7 +449,7 @@ export const KHQR_SUBTAG = Object.freeze({
     ],
 });
 
-export const TRXN_CURRENCY: Record<string, string> = Object.freeze({
+export const CURRENCY: Record<string, string> = Object.freeze({
     USD: '840',
     KHR: '116',
     THB: '764',

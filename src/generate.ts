@@ -1,7 +1,11 @@
-import { EMV, ERROR_CODE, KHQRData } from './constants';
+import { EMV, ERROR_CODE, TAG, CURRENCY } from './constants';
 import {
+    AdditionalDataParamType,
+    MerchantInformationLanguageTemplateParams,
+    type GlobalUniqueIdObjectType,
     PayloadFormatIndicator,
     PointOfInitiationMethod,
+    UnionpayMerchantAccount,
     GlobalUniqueIdentifier,
     MerchantCategoryCode,
     TransactionCurrency,
@@ -10,44 +14,49 @@ import {
     MerchantName,
     MerchantCity,
     AdditionalData,
+    MerchantInformationLanguageTemplate,
     TimeStamp,
-    type AdditionalDataParamType,
-    type GlobalUniqueIdObjectType,
-} from './merchant-code';
-import { KHQRResponse, MerchantInfo } from './models';
-import { crc16, StringUtils } from './utils';
+} from './models';
+import { ReturnType, StringUtils, crc16, response } from './utils';
 
-/**
- * Generate KHQR helper Function
- * 1. create object of subtags elements
- * 2. create the string by passing tag and value to the instances
- * 3. calculate CRC
- * 4. return the value
- * @param information
- * @param types
- * @returns
- */
-export function generateKHQR(information: MerchantInfo, types: string): string {
+export type KHQRPayload = {
+    // required
+    tag: string;
+    accountId: string;
+    merchantName: string;
+    merchantID: string;
+    // optional
+    acquiringBank?: string;
+    merchantCity?: string;
+    currency?: string;
+    amount?: number;
+    upiMerchantAccount?: string;
+    countryCode?: string;
+    additionalData?: AdditionalDataParamType;
+    languageData?: MerchantInformationLanguageTemplateParams;
+};
+
+export function generateQR(payload: KHQRPayload): ReturnType {
     let merchantInfo: GlobalUniqueIdObjectType;
 
-    if (types === KHQRData.merchantType.merchant) {
+    if (payload.tag === TAG.MERCHANT) {
         merchantInfo = {
-            bakongAccountID: information.bakongAccountID,
-            merchantID: information.merchantID,
-            acquiringBank: information.acquiringBank,
+            bakongAccountID: payload.accountId,
+            merchantID: payload.merchantID,
+            acquiringBank: payload.acquiringBank,
             isMerchant: true,
         };
     } else {
         merchantInfo = {
-            bakongAccountID: information.bakongAccountID,
-            accountInformation: information.accountInformation,
-            acquiringBank: information.acquiringBank,
+            bakongAccountID: payload.accountId,
+            accountInformation: payload.merchantID,
+            acquiringBank: payload.acquiringBank,
             isMerchant: false,
         };
     }
 
     try {
-        // Creating each tag
+        // tag 00
         const payloadFormatIndicator = new PayloadFormatIndicator(
             EMV.PAYLOAD_FORMAT_INDICATOR,
             EMV.DEFAULT_PAYLOAD_FORMAT_INDICATOR,
@@ -56,86 +65,95 @@ export function generateKHQR(information: MerchantInfo, types: string): string {
         // Static QR is when QR Code has no amount tag
         // in this case the amount is 0
         let QRType: string = EMV.DYNAMIC_QR;
-        if (!information.amount) {
+        if (!payload.amount) {
             QRType = EMV.STATIC_QR;
         }
+        // tag 01
         const pointOfInitiationMethod = new PointOfInitiationMethod(EMV.POINT_OF_INITIATION_METHOD, QRType);
 
-        // Setting tag for merchant account type
-        let KHQRType: string = EMV.MERCHANT_ACCOUNT_INFORMATION_INDIVIDUAL;
-        if (types === KHQRData.merchantType.merchant) {
-            KHQRType = EMV.MERCHANT_ACCOUNT_INFORMATION_MERCHANT;
+        let upi;
+        if (payload.upiMerchantAccount) {
+            // tag 15
+            upi = new UnionpayMerchantAccount(EMV.UNIONPAY_MERCHANT_ACCOUNT, payload.upiMerchantAccount);
         }
-        const globalUniqueIdentifier = new GlobalUniqueIdentifier(KHQRType, merchantInfo);
-
+        // tag MID 26-51
+        const globalUniqueIdentifier = new GlobalUniqueIdentifier(payload.tag, merchantInfo);
+        // tag 52
         const merchantCategoryCode = new MerchantCategoryCode(
             EMV.MERCHANT_CATEGORY_CODE,
             EMV.DEFAULT_MERCHANT_CATEGORY_CODE,
         );
-
-        const currency = new TransactionCurrency(EMV.TRANSACTION_CURRENCY, information.currency);
+        // tag 53
+        const currency = new TransactionCurrency(EMV.TRANSACTION_CURRENCY, payload.currency);
 
         // Array of KHQR tags to loop and get the string of tags
         const KHQRInstances = [
             payloadFormatIndicator,
             pointOfInitiationMethod,
+            upi || '',
             globalUniqueIdentifier,
             merchantCategoryCode,
             currency,
         ];
 
-        if (information.amount) {
-            let amountInput = String(information.amount);
+        if (payload.amount) {
+            let amountInput = String(payload.amount);
 
-            if (Number(information.currency) === KHQRData.currency.khr) {
-                if (information.amount % 1 === 0) {
-                    amountInput = String(Math.round(information.amount));
+            if (payload.currency === CURRENCY.KHR) {
+                if (payload.amount % 1 === 0) {
+                    amountInput = String(Math.round(payload.amount));
                 } else {
-                    throw KHQRResponse(null, ERROR_CODE.TRANSACTION_AMOUNT_INVALID);
+                    throw response(null, ERROR_CODE.TRANSACTION_AMOUNT_INVALID);
                 }
             } else {
-                const amountSplit = String(information.amount).split('.');
+                const amountSplit = String(payload.amount).split('.');
                 const precision = amountSplit[1];
                 if (precision !== undefined && precision.length > 2) {
-                    throw KHQRResponse(null, ERROR_CODE.TRANSACTION_AMOUNT_INVALID);
+                    throw response(null, ERROR_CODE.TRANSACTION_AMOUNT_INVALID);
                 }
                 if (precision !== undefined) {
                     amountInput = parseFloat(amountInput).toFixed(2);
                 }
             }
 
-            const amount = new TransactionAmount(EMV.TRANSACTION_AMOUNT, amountInput);
-            KHQRInstances.push(amount);
+            // tag 54
+            KHQRInstances.push(new TransactionAmount(EMV.TRANSACTION_AMOUNT, amountInput));
         }
 
-        const countryCode = new CountryCode(EMV.COUNTRY_CODE, EMV.DEFAULT_COUNTRY_CODE);
-        KHQRInstances.push(countryCode);
+        const {
+            countryCode = EMV.DEFAULT_COUNTRY_CODE,
+            merchantCity = EMV.DEFAULT_MERCHANT_CITY,
+            additionalData,
+            languageData,
+        } = payload;
 
-        const merchantName = new MerchantName(EMV.MERCHANT_NAME, information.merchantName);
-        KHQRInstances.push(merchantName);
+        // tag 58
+        KHQRInstances.push(new CountryCode(EMV.COUNTRY_CODE, countryCode));
+        // tag 59
+        KHQRInstances.push(new MerchantName(EMV.MERCHANT_NAME, payload.merchantName));
+        // tag 60
+        KHQRInstances.push(new MerchantCity(EMV.MERCHANT_CITY, merchantCity));
 
-        const merchantCity = new MerchantCity(EMV.MERCHANT_CITY, information.merchantCity);
-        KHQRInstances.push(merchantCity);
-
-        const additionalDataInformation: AdditionalDataParamType = {
-            billNumber: information.billNumber,
-            mobileNumber: information.mobileNumber,
-            storeLabel: information.storeLabel,
-            terminalLabel: information.terminalLabel,
-        };
-
-        const isBillNumber = !StringUtils.isEmpty(information.billNumber);
-        const isMobileNumber = !StringUtils.isEmpty(information.mobileNumber);
-        const isStoreLabel = !StringUtils.isEmpty(information.storeLabel);
-        const isTerminalLabel = !StringUtils.isEmpty(information.terminalLabel);
-
-        if (isBillNumber || isMobileNumber || isStoreLabel || isTerminalLabel) {
-            const additionalData = new AdditionalData(EMV.ADDITIONAL_DATA_TAG, additionalDataInformation);
-            KHQRInstances.push(additionalData);
+        if (additionalData) {
+            const isEmpty = Object.values(additionalData).every((el) => StringUtils.isEmpty(el));
+            if (!isEmpty) {
+                // tag 62
+                KHQRInstances.push(new AdditionalData(EMV.ADDITIONAL_DATA_TAG, additionalData));
+            }
         }
 
-        const timeStamp = new TimeStamp(EMV.TIMESTAMP_TAG);
-        KHQRInstances.push(timeStamp);
+        if (languageData) {
+            const isEmpty = Object.values(languageData).every((el) => StringUtils.isEmpty(el));
+            if (!isEmpty) {
+                // tag 64
+                KHQRInstances.push(
+                    new MerchantInformationLanguageTemplate(EMV.MERCHANT_INFORMATION_LANGUAGE_TEMPLATE, languageData),
+                );
+            }
+        }
+
+        // tag 99
+        KHQRInstances.push(new TimeStamp(EMV.TIMESTAMP_TAG));
 
         let khqrNoCrc = '';
         KHQRInstances.forEach((item) => {
@@ -145,7 +163,7 @@ export function generateKHQR(information: MerchantInfo, types: string): string {
         let khqr = khqrNoCrc + EMV.CRC + EMV.CRC_LENGTH;
         khqr += crc16(khqr);
 
-        return khqr;
+        return response(khqr);
     } catch (error) {
         throw error;
     }
