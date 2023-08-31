@@ -449,7 +449,7 @@ export const KHQR_SUBTAG = Object.freeze({
     ],
 });
 
-export const TRXN_CURRENCY = Object.freeze({
+export const TRXN_CURRENCY: Record<string, string> = Object.freeze({
     USD: '840',
     KHR: '116',
     THB: '764',
@@ -463,4 +463,35 @@ export const TRXN_CURRENCY = Object.freeze({
     IDR: '360',
     INR: '356',
     CNY: '156',
+});
+
+export const TAG: Record<string, string> = Object.freeze({
+    MERCHANT: '30',
+    INDIVIDUAL: '29',
+    TAG_26: '26',
+    TAG_27: '27',
+    TAG_28: '28',
+    TAG_29: '29',
+    TAG_30: '30',
+    TAG_31: '31',
+    TAG_32: '32',
+    TAG_33: '33',
+    TAG_34: '34',
+    TAG_35: '35',
+    TAG_36: '36',
+    TAG_37: '37',
+    TAG_38: '38',
+    TAG_39: '39',
+    TAG_40: '40',
+    TAG_41: '41',
+    TAG_42: '42',
+    TAG_43: '43',
+    TAG_44: '44',
+    TAG_45: '45',
+    TAG_46: '46',
+    TAG_47: '47',
+    TAG_48: '48',
+    TAG_49: '49',
+    TAG_50: '50',
+    TAG_51: '51',
 });

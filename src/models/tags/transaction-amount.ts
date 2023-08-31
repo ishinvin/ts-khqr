@@ -1,6 +1,5 @@
 import { EMV, ERROR_CODE } from '../../constants';
-import { KHQRResponse } from '../khqr-response';
-import { StringUtils } from '../../utils';
+import { StringUtils, response } from '../../utils';
 import { TagLengthString } from './base/tag-length-string';
 
 export class TransactionAmount extends TagLengthString {
@@ -10,7 +9,7 @@ export class TransactionAmount extends TagLengthString {
             String(value).length > EMV.INVALID_LENGTH.AMOUNT ||
             String(value).includes('-')
         ) {
-            throw KHQRResponse(null, ERROR_CODE.TRANSACTION_AMOUNT_INVALID);
+            throw response(null, ERROR_CODE.TRANSACTION_AMOUNT_INVALID);
         }
 
         super(tag, String(value));

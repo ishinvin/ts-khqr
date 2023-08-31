@@ -1,14 +1,4 @@
-type KHQRErrorType = {
-    code: number;
-    message: string;
-};
-
-export type KHQRDataType = {
-    qr: string;
-    // md5: string;
-};
-
-export type KHQRDecodeType = {
+export type ParserType = {
     bakongAccountID: string | null;
     accountInformation: string | null;
     merchantID: string | null;
@@ -17,6 +7,11 @@ export type KHQRDecodeType = {
     mobileNumber: string | null;
     storeLabel: string | null;
     terminalLabel: string | null;
+    purposeOfTransaction: string | null;
+    languagePreference: string | null;
+    merchantNameAlternateLanguage: string | null;
+    merchantCityAlternateLanguage: string | null;
+    unionPayMerchant: string | null;
     timestamp: string | null;
     merchantType: string | null;
     payloadFormatIndicator: string | null;
@@ -30,16 +25,16 @@ export type KHQRDecodeType = {
     crc: string | null;
 };
 
-export type KHQRResponseType<T> = {
+export type ReturnType = {
     status: {
         code: number;
         message: string | null;
         errorCode: number | null;
     };
-    data: T;
+    data: string | null | ParserType;
 };
 
-export const KHQRResponse = <T>(data: T, error?: KHQRErrorType): KHQRResponseType<T> => ({
+export const response = (data: string | null | ParserType, error?: { code: number; message: string }): ReturnType => ({
     status: {
         code: error ? 1 : 0,
         errorCode: error ? error.code : null,

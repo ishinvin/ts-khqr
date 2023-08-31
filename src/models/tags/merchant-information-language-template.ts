@@ -1,6 +1,5 @@
 import { EMV, ERROR_CODE } from '../../constants';
-import { KHQRResponse } from '../khqr-response';
-import { StringUtils } from '../../utils';
+import { StringUtils, response } from '../../utils';
 import { TagLengthString } from './base/tag-length-string';
 
 export type MerchantInformationLanguageTemplateParams = {
@@ -27,7 +26,7 @@ export class MerchantInformationLanguageTemplate extends TagLengthString {
         let merchantCityAlternateLanguage;
 
         if (obj.languagePreference && !obj.merchantNameAlternateLanguage) {
-            throw KHQRResponse(null, ERROR_CODE.MERCHANT_NAME_ALTERNATE_LANGUAGE_REQUIRED);
+            throw response(null, ERROR_CODE.MERCHANT_NAME_ALTERNATE_LANGUAGE_REQUIRED);
         }
 
         let merchantInformationLanguageTemplateString = '';
@@ -64,7 +63,7 @@ export class MerchantInformationLanguageTemplate extends TagLengthString {
 class LanguagePreference extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.LANGUAGE_PREFERENCE)
-            throw KHQRResponse(null, ERROR_CODE.LANGUAGE_PREFERENCE_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.LANGUAGE_PREFERENCE_LENGTH_INVALID);
         super(tag, String(value));
     }
 }
@@ -72,7 +71,7 @@ class LanguagePreference extends TagLengthString {
 class MerchantNameAlternateLanguage extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.MERCHANT_NAME_ALTERNATE_LANGUAGE)
-            throw KHQRResponse(null, ERROR_CODE.MERCHANT_NAME_ALTERNATE_LANGUAGE_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.MERCHANT_NAME_ALTERNATE_LANGUAGE_LENGTH_INVALID);
         super(tag, String(value));
     }
 }
@@ -80,7 +79,7 @@ class MerchantNameAlternateLanguage extends TagLengthString {
 class MerchantCityAlternateLanguage extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.MERCHANT_CITY_ALTERNATE_LANGUAGE)
-            throw KHQRResponse(null, ERROR_CODE.MERCHANT_CITY_ALTERNATE_LANGUAGE_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.MERCHANT_CITY_ALTERNATE_LANGUAGE_LENGTH_INVALID);
         super(tag, String(value));
     }
 }

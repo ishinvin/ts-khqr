@@ -1,6 +1,5 @@
 import { EMV, ERROR_CODE } from '../../constants';
-import { KHQRResponse } from '../khqr-response';
-import { StringUtils } from '../../utils';
+import { StringUtils, response } from '../../utils';
 import { TagLengthString } from './base/tag-length-string';
 
 export type GlobalUniqueIdObjectType = {
@@ -27,7 +26,7 @@ export class GlobalUniqueIdentifier extends TagLengthString {
 
     constructor(tag: string, obj: GlobalUniqueIdObjectType) {
         if (!obj || typeof obj !== 'object') {
-            throw KHQRResponse(null, ERROR_CODE.MERCHANT_TYPE_REQUIRED);
+            throw response(null, ERROR_CODE.MERCHANT_TYPE_REQUIRED);
         }
 
         // Creating 3 instances
@@ -94,7 +93,7 @@ class BakongAccountID extends TagLengthString {
         // 1. No tag
         // 2. empty value of bakong account
         if (StringUtils.isEmpty(bakongAccountID)) {
-            throw KHQRResponse(null, ERROR_CODE.BAKONG_ACCOUNT_ID_REQUIRED);
+            throw response(null, ERROR_CODE.BAKONG_ACCOUNT_ID_REQUIRED);
         }
 
         // Validating the bakong account is it is correct
@@ -103,9 +102,9 @@ class BakongAccountID extends TagLengthString {
 
         // Validate on length of the bakong account
         if (String(bakongAccountID).length > EMV.INVALID_LENGTH.BAKONG_ACCOUNT) {
-            throw KHQRResponse(null, ERROR_CODE.BAKONG_ACCOUNT_ID_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.BAKONG_ACCOUNT_ID_LENGTH_INVALID);
         } else if (bakongAccountDivide.length < 2) {
-            throw KHQRResponse(null, ERROR_CODE.BAKONG_ACCOUNT_ID_INVALID);
+            throw response(null, ERROR_CODE.BAKONG_ACCOUNT_ID_INVALID);
         }
 
         super(tag, String(bakongAccountID));
@@ -115,9 +114,9 @@ class BakongAccountID extends TagLengthString {
 class MerchantID extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value)) {
-            throw KHQRResponse(null, ERROR_CODE.MERCHANT_ID_REQUIRED);
+            throw response(null, ERROR_CODE.MERCHANT_ID_REQUIRED);
         } else if (String(value).length > EMV.INVALID_LENGTH.MERCHANT_ID) {
-            throw KHQRResponse(null, ERROR_CODE.MERCHANT_ID_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.MERCHANT_ID_LENGTH_INVALID);
         }
 
         super(tag, String(value));
@@ -127,9 +126,9 @@ class MerchantID extends TagLengthString {
 class AcquiringBank extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value)) {
-            throw KHQRResponse(null, ERROR_CODE.ACQUIRING_BANK_REQUIRED);
+            throw response(null, ERROR_CODE.ACQUIRING_BANK_REQUIRED);
         } else if (String(value).length > EMV.INVALID_LENGTH.ACQUIRING_BANK) {
-            throw KHQRResponse(null, ERROR_CODE.ACQUIRING_BANK_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.ACQUIRING_BANK_LENGTH_INVALID);
         }
 
         super(tag, String(value));
@@ -139,7 +138,7 @@ class AcquiringBank extends TagLengthString {
 class AccountInformation extends TagLengthString {
     constructor(tag: string, value: string) {
         if (value.length > EMV.INVALID_LENGTH.ACCOUNT_INFORMATION) {
-            throw KHQRResponse(null, ERROR_CODE.ACCOUNT_INFORMATION_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.ACCOUNT_INFORMATION_LENGTH_INVALID);
         }
 
         super(tag, value);

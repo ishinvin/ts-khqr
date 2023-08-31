@@ -1,7 +1,6 @@
 import { EMV, ERROR_CODE } from '../../constants';
-import { KHQRResponse } from '../khqr-response';
 import { TagLengthString } from './base/tag-length-string';
-import { StringUtils } from '../../utils';
+import { StringUtils, response } from '../../utils';
 
 export type AdditionalDataParamType = {
     billNumber?: string;
@@ -83,7 +82,7 @@ export class AdditionalData extends TagLengthString {
 class BillNumber extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.BILL_NUMBER) {
-            throw KHQRResponse(null, ERROR_CODE.BILL_NUMBER_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.BILL_NUMBER_LENGTH_INVALID);
         }
 
         super(tag, String(value));
@@ -93,7 +92,7 @@ class BillNumber extends TagLengthString {
 class StoreLabel extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.STORE_LABEL) {
-            throw KHQRResponse(null, ERROR_CODE.STORE_LABEL_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.STORE_LABEL_LENGTH_INVALID);
         }
 
         super(tag, String(value));
@@ -103,7 +102,7 @@ class StoreLabel extends TagLengthString {
 class TerminalLabel extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.TERMINAL_LABEL) {
-            throw KHQRResponse(null, ERROR_CODE.TERMINAL_LABEL_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.TERMINAL_LABEL_LENGTH_INVALID);
         }
 
         super(tag, String(value));
@@ -113,7 +112,7 @@ class TerminalLabel extends TagLengthString {
 class MobileNumber extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.MOBILE_NUMBER) {
-            throw KHQRResponse(null, ERROR_CODE.MOBILE_NUMBER_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.MOBILE_NUMBER_LENGTH_INVALID);
         }
 
         super(tag, String(value));
@@ -123,7 +122,7 @@ class MobileNumber extends TagLengthString {
 class PurposeOfTransaction extends TagLengthString {
     constructor(tag: string, value?: string) {
         if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.PURPOSE_OF_TRANSACTION)
-            throw KHQRResponse(null, ERROR_CODE.PURPOSE_OF_TRANSACTION_LENGTH_INVALID);
+            throw response(null, ERROR_CODE.PURPOSE_OF_TRANSACTION_LENGTH_INVALID);
         super(tag, String(value));
     }
 }
