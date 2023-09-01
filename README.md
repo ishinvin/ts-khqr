@@ -32,10 +32,10 @@ const result = KHQR.generate({
     // optional
     merchantID: "012345678",
     acquiringBank: "Dev Bank",
-    merchantCity: "Phnom Penh",
-    currency: CURRENCY.KHR,
-    amount: 10000,
-    countryCode: COUNTRY.KH,
+    merchantCity: "Phnom Penh", // default 'Phnom Penh'
+    currency: CURRENCY.KHR, // default KHR
+    amount: 10000, // default 0
+    countryCode: COUNTRY.KH, // default KH
     additionalData: {
         mobileNumber: "85512345678",
         billNumber: "INV-2022-12-25",

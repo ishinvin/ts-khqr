@@ -449,7 +449,10 @@ export const KHQR_SUBTAG = Object.freeze({
     ],
 });
 
-export const CURRENCY: Record<string, string> = Object.freeze({
+export const CURRENCY: Record<
+    'USD' | 'KHR' | 'THB' | 'LAK' | 'VND' | 'MYR' | 'MMK' | 'BND' | 'PHP' | 'SGD' | 'IDR' | 'INR' | 'CNY',
+    string
+> = Object.freeze({
     USD: '840',
     KHR: '116',
     THB: '764',
@@ -465,7 +468,10 @@ export const CURRENCY: Record<string, string> = Object.freeze({
     CNY: '156',
 });
 
-export const COUNTRY: Record<string, string> = Object.freeze({
+export const COUNTRY: Record<
+    'KH' | 'TH' | 'LA' | 'VN' | 'MY' | 'MM' | 'BN' | 'PH' | 'SG' | 'ID' | 'IN' | 'CN',
+    string
+> = Object.freeze({
     KH: 'KH',
     TH: 'TH',
     LA: 'LA',
@@ -480,7 +486,37 @@ export const COUNTRY: Record<string, string> = Object.freeze({
     CN: 'CN',
 });
 
-export const TAG: Record<string, string> = Object.freeze({
+export const TAG: Record<
+    | 'MERCHANT'
+    | 'INDIVIDUAL'
+    | 'TAG_26'
+    | 'TAG_27'
+    | 'TAG_28'
+    | 'TAG_29'
+    | 'TAG_30'
+    | 'TAG_31'
+    | 'TAG_32'
+    | 'TAG_33'
+    | 'TAG_34'
+    | 'TAG_35'
+    | 'TAG_36'
+    | 'TAG_37'
+    | 'TAG_38'
+    | 'TAG_39'
+    | 'TAG_40'
+    | 'TAG_41'
+    | 'TAG_42'
+    | 'TAG_43'
+    | 'TAG_44'
+    | 'TAG_45'
+    | 'TAG_46'
+    | 'TAG_47'
+    | 'TAG_48'
+    | 'TAG_49'
+    | 'TAG_50'
+    | 'TAG_51',
+    string
+> = Object.freeze({
     MERCHANT: '30',
     INDIVIDUAL: '29',
     TAG_26: '26',
