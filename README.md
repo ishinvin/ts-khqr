@@ -17,73 +17,40 @@ npm install ts-khqr
 ## Usage
 
 ```js
-import { BakongKHQR, IndividualInfo, MerchantInfo, KHQRData  } from 'ts-khqr'
+import { KHQR, CURRENCY, TAG } from "ts-khqr"
 ```
 
-### Generate Individual KHQR
+### Generate KHQR
 
 ```js
-import { BakongKHQR, IndividualInfo, KHQRData } from 'ts-khqr'
+import { KHQR, CURRENCY, COUNTRY, TAG } from "ts-khqr"
 
-const optionalData = {
-    currency: KHQRData.currency.khr,
-    amount: 10000,
+const result = KHQR.generate({
+    tag: TAG.INDIVIDUAL, // TAG.MERCHANT
+    accountID: "ishinvin@devb",
+    merchantName: "Ishin Vin",
+    // optional
+    merchantID: "012345678",
     acquiringBank: "Dev Bank",
-    mobileNumber: "85512345678",
-    billNumber: "INV-2022-12-25",
-    storeLabel: "Ishin Shop",
-    terminalLabel: "012345",
-    accountInformation: "012345678",
-};
-
-const individualInfo = new IndividualInfo(
-    "ishinvin@devb",
-    "Ishin Vin",
-    "Siem Reap",
-    optionalData
-);
-
-const khqr = new BakongKHQR();
-const result = khqr.generateIndividual(individualInfo);
-console.log(result);
-```
-
-Output:
-```js
-{
-  status: { code: 0, errorCode: null, message: null },
-  data: {
-    qr: '00020101021229420013ishinvin@devb01090123456780208Dev Bank5204599953031165405100005802KH5909Ishin Vin6009Siem Reap62570114INV-2022-12-250211855123456780310Ishin Shop07060123459917001316720224515776304542B'
-  }
-}
-```
-
-### Generate Merchant KHQR
-
-```js
-import { BakongKHQR, MerchantInfo, KHQRData } from 'ts-khqr'
-
-const optionalData = {
-    currency: KHQRData.currency.khr,
+    merchantCity: "Phnom Penh",
+    currency: CURRENCY.KHR,
     amount: 10000,
-    mobileNumber: "85512345678",
-    billNumber: "INV-2022-12-25",
-    storeLabel: "Ishin Shop",
-    terminalLabel: "012345",
-    accountInformation: "012345678",
-};
+    countryCode: COUNTRY.KH,
+    additionalData: {
+        mobileNumber: "85512345678",
+        billNumber: "INV-2022-12-25",
+        storeLabel: "Ishin Shop",
+        terminalLabel: "012345",
+        purposeOfTransaction: "Payment"
+    },
+    languageData: {
+        languagePreference: "ZH",
+        merchantNameAlternateLanguage: "文山",
+        merchantCityAlternateLanguage: "金边"
+    },
+    upiMerchantAccount: ""
+})
 
-const merchantInfo = new MerchantInfo(
-    'ishinvin@devb',
-    "Ishin VIN",
-    "Phnom Penh",
-    'MID12345',
-    'Dev Bank',
-    optionalData
-);
-
-const khqr = new BakongKHQR();
-const result = khqr.generateMerchant(merchantInfo);
 console.log(result);
 ```
 
@@ -91,29 +58,29 @@ Output:
 ```js
 {
   status: { code: 0, errorCode: null, message: null },
-  data: {
-    qr: '00020101021230410013ishinvin@devb0108MID123450208Dev Bank5204599953031165405100005802KH5909Ishin VIN6010Phnom Penh62570114INV-2022-12-250211855123456780310Ishin Shop070601234599170013167202283048363042335'
-  }
+  data: "00020101021229420013ishinvin@devb01090123456780208Dev Bank5204599953031165405100005802KH5909Ishin Vin6010Phnom Penh62680114INV-2022-12-250211855123456780310Ishin Shop07060123450807Payment64180002ZH0102文山0202金边9917001316935559673876304AE27"
 }
 ```
 
 ### Verify KHQR
 ```js
-import { BakongKHQR } from "ts-khqr";
+import { KHQR } from "ts-khqr";
 
-const khqrString = '00020101021229420013ishinvin@devb01090123456780208Dev Bank5204599953031165405100005802KH5909Ishin Vin6009Siem Reap62570114INV-2022-12-250211855123456780310Ishin Shop07060123459917001316720224515776304542B';
-const isKHQR = BakongKHQR.verify(khqrString).isValid;
+const khqrString = "00020101021229420013ishinvin@devb01090123456780208Dev Bank5204599953031165405100005802KH5909Ishin Vin6010Phnom Penh62680114INV-2022-12-250211855123456780310Ishin Shop07060123450807Payment64180002ZH0102文山0202金边9917001316935559673876304AE27";
+
+const isKHQR = KHQR.verify(khqrString).isValid;
 
 console.log(isKHQR);
 // true
 ```
 
-### Decode
+### Parse KHQR
 ```js
-import { BakongKHQR } from "ts-khqr";
+import { KHQR } from "ts-khqr";
 
-const khqrString = '00020101021229420013ishinvin@devb01090123456780208Dev Bank5204599953031165405100005802KH5909Ishin Vin6009Siem Reap62570114INV-2022-12-250211855123456780310Ishin Shop07060123459917001316720224515776304542B';
-const result = BakongKHQR.decode(khqrString);
+cconst khqrString = "00020101021229420013ishinvin@devb01090123456780208Dev Bank5204599953031165405100005802KH5909Ishin Vin6010Phnom Penh62680114INV-2022-12-250211855123456780310Ishin Shop07060123450807Payment64180002ZH0102文山0202金边9917001316935559673876304AE27";
+
+const result = KHQR.parse(khqrString);
 
 console.log(result);
 ```
@@ -132,16 +99,21 @@ Output:
     mobileNumber: '85512345678',
     storeLabel: 'Ishin Shop',
     terminalLabel: '012345',
-    timestamp: '1672022451577',
+    purposeOfTransaction: 'Payment',
+    languagePreference: 'ZH',
+    merchantNameAlternateLanguage: '文山',
+    merchantCityAlternateLanguage: '金边',
     payloadFormatIndicator: '01',
     pointofInitiationMethod: '12',
+    unionPayMerchant: null,
     merchantCategoryCode: '5999',
     transactionCurrency: '116',
     transactionAmount: '10000',
     countryCode: 'KH',
     merchantName: 'Ishin Vin',
-    merchantCity: 'Siem Reap',
-    crc: '542B'
+    merchantCity: 'Phnom Penh',
+    timestamp: '00131693555967387',
+    crc: 'AE27'
   }
 }
 ```

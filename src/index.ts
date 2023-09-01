@@ -4,7 +4,7 @@ import { parseQR } from './parser';
 import { type ReturnType, type ParserType, crc16, response, StringUtils } from './utils';
 import { verifyQR } from './verify';
 
-export { CURRENCY, TAG } from './constants';
+export { CURRENCY, TAG, COUNTRY } from './constants';
 export type { ReturnType, QRPayload, ParserType };
 
 export class KHQR {

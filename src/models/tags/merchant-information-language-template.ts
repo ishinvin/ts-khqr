@@ -20,7 +20,7 @@ export class MerchantInformationLanguageTemplate extends TagLengthString {
     merchantCityAlternateLanguage?: MerchantCityAlternateLanguage;
     data: MerchantInformationLanguageTemplateType;
 
-    constructor(tag: string, obj: MerchantInformationLanguageTemplateParams) {
+    constructor(tag: string, obj: MerchantInformationLanguageTemplateParams = {}) {
         let languagePreference;
         let merchantNameAlternateLanguage;
         let merchantCityAlternateLanguage;
@@ -62,26 +62,29 @@ export class MerchantInformationLanguageTemplate extends TagLengthString {
 
 class LanguagePreference extends TagLengthString {
     constructor(tag: string, value?: string) {
-        if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.LANGUAGE_PREFERENCE)
+        if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.LANGUAGE_PREFERENCE) {
             throw response(null, ERROR_CODE.LANGUAGE_PREFERENCE_LENGTH_INVALID);
+        }
+
         super(tag, String(value));
     }
 }
 
 class MerchantNameAlternateLanguage extends TagLengthString {
     constructor(tag: string, value?: string) {
-        if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.MERCHANT_NAME_ALTERNATE_LANGUAGE)
+        if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.MERCHANT_NAME_ALTERNATE_LANGUAGE) {
             throw response(null, ERROR_CODE.MERCHANT_NAME_ALTERNATE_LANGUAGE_LENGTH_INVALID);
+        }
+
         super(tag, String(value));
     }
 }
 
 class MerchantCityAlternateLanguage extends TagLengthString {
     constructor(tag: string, value?: string) {
-        if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.MERCHANT_CITY_ALTERNATE_LANGUAGE)
+        if (StringUtils.isEmpty(value) || String(value).length > EMV.INVALID_LENGTH.MERCHANT_CITY_ALTERNATE_LANGUAGE) {
             throw response(null, ERROR_CODE.MERCHANT_CITY_ALTERNATE_LANGUAGE_LENGTH_INVALID);
+        }
         super(tag, String(value));
     }
 }
-
-module.exports = MerchantInformationLanguageTemplate;

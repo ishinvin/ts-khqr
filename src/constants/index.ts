@@ -465,6 +465,21 @@ export const CURRENCY: Record<string, string> = Object.freeze({
     CNY: '156',
 });
 
+export const COUNTRY: Record<string, string> = Object.freeze({
+    KH: 'KH',
+    TH: 'TH',
+    LA: 'LA',
+    VN: 'VN',
+    MY: 'MY',
+    MM: 'MM',
+    BN: 'BN',
+    PH: 'PH',
+    SG: 'SG',
+    ID: 'ID',
+    IN: 'IN',
+    CN: 'CN',
+});
+
 export const TAG: Record<string, string> = Object.freeze({
     MERCHANT: '30',
     INDIVIDUAL: '29',
