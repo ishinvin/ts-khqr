@@ -25,16 +25,16 @@ export type ParserType = {
     crc: string | null;
 };
 
-export type ReturnType = {
+export type ReturnType<T> = {
     status: {
         code: number;
         message: string | null;
         errorCode: number | null;
     };
-    data: string | null | ParserType;
+    data: T;
 };
 
-export const response = (data: string | null | ParserType, error?: { code: number; message: string }): ReturnType => ({
+export const response = <T>(data: T, error?: { code: number; message: string }): ReturnType<T> => ({
     status: {
         code: error ? 1 : 0,
         errorCode: error ? error.code : null,

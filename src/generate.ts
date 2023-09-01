@@ -19,12 +19,12 @@ import {
 } from './models';
 import { ReturnType, StringUtils, crc16, response } from './utils';
 
-export type KHQRPayload = {
+export type QRPayload = {
     // required
     tag: string;
-    accountId: string;
+    accountID: string;
     merchantName: string;
-    merchantID: string;
+    merchantID?: string;
     // optional
     acquiringBank?: string;
     merchantCity?: string;
@@ -36,19 +36,19 @@ export type KHQRPayload = {
     languageData?: MerchantInformationLanguageTemplateParams;
 };
 
-export function generateQR(payload: KHQRPayload): ReturnType {
+export function generateQR(payload: QRPayload): ReturnType<string | null> {
     let merchantInfo: GlobalUniqueIdObjectType;
 
     if (payload.tag === TAG.MERCHANT) {
         merchantInfo = {
-            bakongAccountID: payload.accountId,
+            bakongAccountID: payload.accountID,
             merchantID: payload.merchantID,
             acquiringBank: payload.acquiringBank,
             isMerchant: true,
         };
     } else {
         merchantInfo = {
-            bakongAccountID: payload.accountId,
+            bakongAccountID: payload.accountID,
             accountInformation: payload.merchantID,
             acquiringBank: payload.acquiringBank,
             isMerchant: false,
@@ -83,8 +83,17 @@ export function generateQR(payload: KHQRPayload): ReturnType {
             EMV.MERCHANT_CATEGORY_CODE,
             EMV.DEFAULT_MERCHANT_CATEGORY_CODE,
         );
+
+        const {
+            countryCode = EMV.DEFAULT_COUNTRY_CODE,
+            merchantCity = EMV.DEFAULT_MERCHANT_CITY,
+            currency = CURRENCY.KHR,
+            additionalData,
+            languageData,
+        } = payload;
+
         // tag 53
-        const currency = new TransactionCurrency(EMV.TRANSACTION_CURRENCY, payload.currency);
+        const trxnCurrency = new TransactionCurrency(EMV.TRANSACTION_CURRENCY, currency);
 
         // Array of KHQR tags to loop and get the string of tags
         const KHQRInstances = [
@@ -93,13 +102,13 @@ export function generateQR(payload: KHQRPayload): ReturnType {
             upi || '',
             globalUniqueIdentifier,
             merchantCategoryCode,
-            currency,
+            trxnCurrency,
         ];
 
         if (payload.amount) {
             let amountInput = String(payload.amount);
 
-            if (payload.currency === CURRENCY.KHR) {
+            if (currency === CURRENCY.KHR) {
                 if (payload.amount % 1 === 0) {
                     amountInput = String(Math.round(payload.amount));
                 } else {
@@ -119,13 +128,6 @@ export function generateQR(payload: KHQRPayload): ReturnType {
             // tag 54
             KHQRInstances.push(new TransactionAmount(EMV.TRANSACTION_AMOUNT, amountInput));
         }
-
-        const {
-            countryCode = EMV.DEFAULT_COUNTRY_CODE,
-            merchantCity = EMV.DEFAULT_MERCHANT_CITY,
-            additionalData,
-            languageData,
-        } = payload;
 
         // tag 58
         KHQRInstances.push(new CountryCode(EMV.COUNTRY_CODE, countryCode));
@@ -165,6 +167,6 @@ export function generateQR(payload: KHQRPayload): ReturnType {
 
         return response(khqr);
     } catch (error) {
-        throw error;
+        return error as ReturnType<null>;
     }
 }

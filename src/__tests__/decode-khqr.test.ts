@@ -1,4 +1,4 @@
-import { BakongKHQR, KHQRData } from './..';
+import { KHQR, CURRENCY } from '../index';
 
 const testData = [
     {
@@ -8,7 +8,7 @@ const testData = [
             bakongAccountID: 'jonhsmith@nbcq',
             merchantName: 'Jonh Smith',
             merchantCity: 'PHNOM PENH',
-            transactionCurrency: String(KHQRData.currency.usd),
+            transactionCurrency: CURRENCY.USD,
             transactionAmount: '1',
             billNumber: 'INV-2021-07-65822',
         },
@@ -20,7 +20,7 @@ const testData = [
             bakongAccountID: 'jonhsmith@nbcq',
             merchantName: 'Jonh Smith',
             merchantCity: 'Phnom Penh',
-            transactionCurrency: String(KHQRData.currency.khr),
+            transactionCurrency: CURRENCY.KHR,
             transactionAmount: '50000',
             mobileNumber: '85512345678',
         },
@@ -43,7 +43,7 @@ const testData = [
             bakongAccountID: 'jonhsmith@nbcq',
             merchantName: 'Jonh Smith',
             merchantCity: 'Siem Reap',
-            transactionCurrency: String(KHQRData.currency.khr),
+            transactionCurrency: CURRENCY.KHR,
             transactionAmount: '50000',
             mobileNumber: '85512345678',
             billNumber: 'INV-2021-07-65822',
@@ -58,7 +58,7 @@ const testData = [
             bakongAccountID: 'jonhsmith@nbcq',
             merchantName: 'Jonh Smith',
             merchantCity: 'Siem Reap',
-            transactionCurrency: String(KHQRData.currency.khr),
+            transactionCurrency: CURRENCY.KHR,
             transactionAmount: '50000',
             acquiringBank: 'Dev Bank',
             accountInformation: '012345678',
@@ -75,7 +75,7 @@ const testData = [
             bakongAccountID: 'jonhsmith@nbcq',
             merchantName: 'Jonh Smith',
             merchantCity: 'Siem Reap',
-            transactionCurrency: String(KHQRData.currency.khr),
+            transactionCurrency: CURRENCY.KHR,
             transactionAmount: '50000',
             mobileNumber: '85512345678',
             billNumber: 'INV-2021-07-65822',
@@ -91,7 +91,7 @@ const testData = [
             bakongAccountID: 'jonhsmith@nbcq',
             merchantName: 'Jonh Smith',
             merchantCity: 'Siem Reap',
-            transactionCurrency: String(KHQRData.currency.khr),
+            transactionCurrency: CURRENCY.KHR,
             transactionAmount: '50000',
             mobileNumber: '85512345678',
             billNumber: 'INV-2021-07-65822',
@@ -107,7 +107,7 @@ const testData = [
             bakongAccountID: 'jonhsmith@nbcq',
             merchantName: 'Jonh Smith',
             merchantCity: 'Siem Reap',
-            transactionCurrency: String(KHQRData.currency.khr),
+            transactionCurrency: CURRENCY.KHR,
             transactionAmount: '50000',
             mobileNumber: '85512345678',
             billNumber: 'INV-2021-07-65822',
@@ -120,7 +120,7 @@ const testData = [
 
 testData.forEach((data) => {
     test(data.statement, () => {
-        const result = BakongKHQR.decode(data.data);
+        const result = KHQR.parse(data.data);
         const received: { [key: string]: string } = {};
         Object.keys(data.result).forEach((i) => {
             if (result.data) {

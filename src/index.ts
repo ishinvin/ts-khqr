@@ -1,46 +1,43 @@
-import { KHQRPayload, generateQR } from './generate';
-import type { ReturnType, ParserType } from './utils';
+import { EMV, ERROR_CODE } from './constants';
+import { QRPayload, generateQR } from './generate';
+import { parseQR } from './parser';
+import { type ReturnType, type ParserType, crc16, response, StringUtils } from './utils';
+import { verifyQR } from './verify';
 
 export { CURRENCY, TAG } from './constants';
-export type { ReturnType, KHQRPayload, ParserType };
+export type { ReturnType, QRPayload, ParserType };
 
 export class KHQR {
-    static generate(payload: KHQRPayload): ReturnType {
+    static generate(payload: QRPayload): ReturnType<string | null> {
         return generateQR(payload);
     }
 
-    // static verify(KHQRString: string): { isValid: boolean } {
-    //     // Check CRC
-    //     const crcRegExp = /6304[A-Fa-f0-9]{4}$/;
-    //     if (!crcRegExp.test(KHQRString)) {
-    //         return { isValid: false };
-    //     }
+    static verify(qrString: string): { isValid: boolean } {
+        // Check CRC
+        const crcRegExp = /6304[A-Fa-f0-9]{4}$/;
+        if (!crcRegExp.test(qrString)) {
+            return { isValid: false };
+        }
 
-    //     const crc = KHQRString.slice(-4);
-    //     const KHQRNoCrc = KHQRString.slice(0, -4);
-    //     const validCRC = crc16(KHQRNoCrc) === crc.toUpperCase();
+        const crc = qrString.slice(-4);
+        const KHQRNoCrc = qrString.slice(0, -4);
+        const validCRC = crc16(KHQRNoCrc) === crc.toUpperCase();
 
-    //     try {
-    //         if (!validCRC || KHQRString.length < EMV.INVALID_LENGTH.KHQR) {
-    //             throw KHQRResponse(null, ERROR_CODE.KHQR_INVALID);
-    //         }
-    //         verify(KHQRString);
+        try {
+            if (!validCRC || qrString.length < EMV.INVALID_LENGTH.KHQR) {
+                throw response(null, ERROR_CODE.KHQR_INVALID);
+            }
+            verifyQR(qrString);
+            return { isValid: true };
+        } catch (error) {
+            return { isValid: false };
+        }
+    }
 
-    //         return { isValid: true };
-    //     } catch (error) {
-    //         return { isValid: false };
-    //     }
-    // }
-
-    /**
-     * Decode KHQR
-     * @param KHQRString
-     * @returns
-     */
-    // static decode(KHQRString: string): KHQRResponseType<KHQRDecodeType | null> {
-    //     if (StringUtils.isEmpty(KHQRString)) {
-    //         return KHQRResponse(null, ERROR_CODE.KHQR_INVALID);
-    //     }
-    //     return KHQRResponse(decode(KHQRString));
-    // }
+    static parse(qrString: string): ReturnType<ParserType | null> {
+        if (StringUtils.isEmpty(qrString)) {
+            return response(null, ERROR_CODE.KHQR_INVALID);
+        }
+        return response(parseQR(qrString));
+    }
 }

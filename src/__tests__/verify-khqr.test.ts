@@ -1,5 +1,5 @@
-import { BakongKHQR } from './..';
 import { crc16 } from '../utils';
+import { KHQR } from '../index';
 
 const testData = [
     {
@@ -221,8 +221,7 @@ const testData = [
 
 testData.forEach((data) => {
     test(data.statement, () => {
-        const isValidKHQR = BakongKHQR.verify(data.data);
-
+        const isValidKHQR = KHQR.verify(data.data);
         expect(isValidKHQR.isValid).toBe(data.result);
     });
 });
@@ -358,7 +357,7 @@ const testDataFromFailedDecode = [
 testDataFromFailedDecode.forEach((data) => {
     test(data.statement, () => {
         const khqr = data.data + crc16(data.data);
-        const decodeResponse = BakongKHQR.verify(khqr);
+        const decodeResponse = KHQR.verify(khqr);
 
         expect(decodeResponse.isValid).toBe(false);
     });
