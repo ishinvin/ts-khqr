@@ -59,7 +59,7 @@ export class GlobalUniqueIdentifier extends TagLengthString {
             };
         } else {
             // note: check like this for compatible with bakong-khqr sdk
-            if (obj.accountInformation !== undefined && obj.accountInformation !== null) {
+            if (!StringUtils.isEmpty(obj.accountInformation)) {
                 const accInformation = new AccountInformation(
                     EMV.INDIVIDUAL_ACCOUNT_INFORMATION,
                     String(obj.accountInformation),
@@ -67,7 +67,7 @@ export class GlobalUniqueIdentifier extends TagLengthString {
                 globalUniqueIdentifier += accInformation.toString();
             }
 
-            if (obj.acquiringBank !== undefined && obj.acquiringBank !== null) {
+            if (!StringUtils.isEmpty(obj.acquiringBank)) {
                 const acquiringBank = new AcquiringBank(
                     EMV.MERCHANT_ACCOUNT_INFORMATION_ACQUIRING_BANK,
                     obj.acquiringBank,
