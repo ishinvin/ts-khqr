@@ -34,10 +34,10 @@ export class KHQR {
         }
     }
 
-    static parse(qrString: string, ignoreTag: boolean = false): ReturnType<ParserType | null> {
+    static parse(qrString: string): ReturnType<ParserType | null> {
         if (StringUtils.isEmpty(qrString)) {
             return response(null, ERROR_CODE.KHQR_INVALID);
         }
-        return response(parseQR(qrString, ignoreTag));
+        return response(parseQR(qrString));
     }
 }
