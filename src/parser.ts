@@ -3,7 +3,7 @@ import { ParserType, StringUtils } from './utils';
 
 const cloneObject = (obj: any) => JSON.parse(JSON.stringify(obj));
 
-export function parseQR(qrString: string): ParserType {
+export function parseQR(qrString: string, ignoreTag: boolean): ParserType {
     const allTags = KHQR_TAG.map((item) => item.tag);
     const subTags = KHQR_TAG.filter((item) => item.sub === true).map((item) => item.tag);
 
@@ -26,6 +26,9 @@ export function parseQR(qrString: string): ParserType {
             isMerchantTag = true;
         } else if (tag === '29') {
             merchantType = '29';
+        } else if (ignoreTag) {
+            merchantType = tag;
+            tag = '29';
         }
 
         if (allTags.includes(tag)) {
