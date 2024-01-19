@@ -107,6 +107,6 @@ const testData: { statement: string; data: QRPayload; result: string }[] = [
 testData.forEach((data) => {
     test(data.statement, () => {
         const res = KHQR.generate(data.data);
-        expect(res.data?.slice(0, -29)).toBe(data.result);
+        expect(res.data?.qr.slice(0, -29)).toBe(data.result);
     });
 });

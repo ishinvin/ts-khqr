@@ -17,7 +17,8 @@ import {
     MerchantInformationLanguageTemplate,
     TimeStamp,
 } from './models';
-import { ReturnType, StringUtils, crc16, response } from './utils';
+import { type ReturnType, type ResponseResult, StringUtils, crc16, response } from './utils';
+import md5 from 'md5';
 
 export type QRPayload = {
     // required
@@ -36,7 +37,7 @@ export type QRPayload = {
     languageData?: MerchantInformationLanguageTemplateParams;
 };
 
-export function generateQR(payload: QRPayload): ReturnType<string | null> {
+export function generateQR(payload: QRPayload): ReturnType<ResponseResult | null> {
     let merchantInfo: GlobalUniqueIdObjectType;
 
     if (payload.tag === TAG.MERCHANT) {
@@ -165,7 +166,10 @@ export function generateQR(payload: QRPayload): ReturnType<string | null> {
         let khqr = khqrNoCrc + EMV.CRC + EMV.CRC_LENGTH;
         khqr += crc16(khqr);
 
-        return response(khqr);
+        return response({
+            qr: khqr,
+            md5: md5(khqr),
+        });
     } catch (error) {
         return error as ReturnType<null>;
     }

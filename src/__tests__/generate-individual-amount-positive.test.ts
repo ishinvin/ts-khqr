@@ -246,7 +246,7 @@ const amountTestData: { statement: string; data: QRPayload; result: string }[] =
 amountTestData.forEach((data) => {
     test(data.statement, () => {
         const res = KHQR.generate(data.data);
-        const decodeValue = KHQR.parse(String(res.data));
+        const decodeValue = KHQR.parse(String(res.data?.qr));
         expect(decodeValue.data?.transactionAmount).toBe(data.result);
     });
 });

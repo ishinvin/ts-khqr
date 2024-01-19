@@ -34,6 +34,11 @@ export type ReturnType<T> = {
     data: T;
 };
 
+export type ResponseResult = {
+    qr: string;
+    md5: string;
+};
+
 export const response = <T>(data: T, error?: { code: number; message: string }): ReturnType<T> => ({
     status: {
         code: error ? 1 : 0,

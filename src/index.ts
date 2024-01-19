@@ -1,14 +1,13 @@
 import { EMV, ERROR_CODE } from './constants';
 import { QRPayload, generateQR } from './generate';
 import { parseQR } from './parser';
-import { type ReturnType, type ParserType, crc16, response, StringUtils } from './utils';
+import { type ReturnType, type ParserType, type ResponseResult, crc16, response, StringUtils } from './utils';
 import { verifyQR } from './verify';
 
 export { CURRENCY, TAG, COUNTRY } from './constants';
-export type { ReturnType, QRPayload, ParserType };
-
+export type { ReturnType, QRPayload, ParserType, ResponseResult };
 export class KHQR {
-    static generate(payload: QRPayload): ReturnType<string | null> {
+    static generate(payload: QRPayload): ReturnType<ResponseResult | null> {
         return generateQR(payload);
     }
 
