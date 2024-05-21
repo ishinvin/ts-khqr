@@ -462,7 +462,10 @@ type CurrencyKey =
     | 'SGD'
     | 'IDR'
     | 'INR'
-    | 'CNY';
+    | 'CNY'
+    | 'AUD'
+    | 'CZK'
+    | 'EUR';
 export const CURRENCY: { [K in CurrencyKey]: string } = Object.freeze({
     USD: '840',
     KHR: '116',
@@ -477,10 +480,28 @@ export const CURRENCY: { [K in CurrencyKey]: string } = Object.freeze({
     IDR: '360',
     INR: '356',
     CNY: '156',
+    AUD: '036',
+    CZK: '203',
+    EUR: '978',
 });
 
 export const COUNTRY: {
-    [K in 'KH' | 'TH' | 'LA' | 'VN' | 'MY' | 'MM' | 'BN' | 'PH' | 'SG' | 'ID' | 'IN' | 'CN']: string;
+    [K in
+        | 'KH'
+        | 'TH'
+        | 'LA'
+        | 'VN'
+        | 'MY'
+        | 'MM'
+        | 'BN'
+        | 'PH'
+        | 'SG'
+        | 'ID'
+        | 'IN'
+        | 'CN'
+        | 'AU'
+        | 'CZ'
+        | 'FR']: string;
 } = Object.freeze({
     KH: 'KH',
     TH: 'TH',
@@ -494,6 +515,9 @@ export const COUNTRY: {
     ID: 'ID',
     IN: 'IN',
     CN: 'CN',
+    AU: 'AU',
+    CZ: 'CZ',
+    FR: 'FR',
 });
 
 type TagKey =

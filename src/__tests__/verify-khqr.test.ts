@@ -284,7 +284,7 @@ const testDataFromFailedDecode = [
     },
     {
         statement: 'Unsupported currency',
-        data: '00020101021230190015john_smith@devb52045999530397854035005802KH5910John Smith6010Phnom Penh62460111Invoice#0690314Coffee Khlaing0709Counter 29917001316140656838196304',
+        data: '00020101021229190015john_smith@devb52045999530326254035005802KH5910John Smith6010Phnom Penh62570111Invoice#0690314Coffee Khlaing0709Counter 20807Payment99170013171628493070963048FE2',
         errorCode: 28,
     },
     {
