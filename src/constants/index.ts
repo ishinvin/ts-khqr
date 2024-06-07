@@ -523,6 +523,30 @@ export const COUNTRY: {
 type TagKey =
     | 'MERCHANT'
     | 'INDIVIDUAL'
+    | 'TAG_02'
+    | 'TAG_03'
+    | 'TAG_04'
+    | 'TAG_05'
+    | 'TAG_06'
+    | 'TAG_07'
+    | 'TAG_08'
+    | 'TAG_09'
+    | 'TAG_10'
+    | 'TAG_11'
+    | 'TAG_12'
+    | 'TAG_13'
+    | 'TAG_14'
+    | 'TAG_15'
+    | 'TAG_16'
+    | 'TAG_17'
+    | 'TAG_18'
+    | 'TAG_19'
+    | 'TAG_20'
+    | 'TAG_21'
+    | 'TAG_22'
+    | 'TAG_23'
+    | 'TAG_24'
+    | 'TAG_25'
     | 'TAG_26'
     | 'TAG_27'
     | 'TAG_28'
@@ -552,6 +576,30 @@ type TagKey =
 export const TAG: { [K in TagKey]: string } = Object.freeze({
     MERCHANT: '30',
     INDIVIDUAL: '29',
+    TAG_02: '02',
+    TAG_03: '03',
+    TAG_04: '04',
+    TAG_05: '05',
+    TAG_06: '06',
+    TAG_07: '07',
+    TAG_08: '08',
+    TAG_09: '09',
+    TAG_10: '10',
+    TAG_11: '11',
+    TAG_12: '12',
+    TAG_13: '13',
+    TAG_14: '14',
+    TAG_15: '15',
+    TAG_16: '16',
+    TAG_17: '17',
+    TAG_18: '18',
+    TAG_19: '19',
+    TAG_20: '20',
+    TAG_21: '21',
+    TAG_22: '22',
+    TAG_23: '23',
+    TAG_24: '24',
+    TAG_25: '25',
     TAG_26: '26',
     TAG_27: '27',
     TAG_28: '28',
