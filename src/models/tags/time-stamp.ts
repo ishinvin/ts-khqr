@@ -8,7 +8,7 @@ export type TimeStampParams = {
 };
 
 export class TimeStamp extends TagLengthString {
-    constructor(tag: string, timestamp: TimeStampParams, poi?: String) {
+    constructor(tag: string, timestamp: TimeStampParams, poi?: string) {
         const creationTimestamp = Number(timestamp?.creationTimestamp);
         const expirationTimestamp = Number(timestamp?.expirationTimestamp);
 

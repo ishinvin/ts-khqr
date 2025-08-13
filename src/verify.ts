@@ -56,7 +56,7 @@ export function verifyQR(qrString: string) {
         }
     }
 
-    let poi: String | undefined;
+    let poi: string | undefined;
     tags.forEach((khqrTag) => {
         const { tag } = khqrTag;
         let { value } = khqrTag;
