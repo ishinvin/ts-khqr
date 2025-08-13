@@ -1,40 +1,42 @@
 import { crc16 } from '../utils';
 import { KHQR } from '../index';
+import { TimeStamp } from '../models';
+import { EMV } from '../constants';
 
 const testData = [
     {
         statement: 'Valid KHQR 1',
-        data: '00020101021229180014jonhsmith@nbcq520459995303116540750000.05802KH5910Jonh Smith6010Phnom Penh62150211855123456789917001316257134678276304A96B',
+        data: '00020101021229180014jonhsmith@nbcq520459995303116540750000.05802KH5910Jonh Smith6010Phnom Penh6215021185512345678', // 9917001316257134678276304A96B
         result: true,
     },
     {
         statement: 'Valid KHQR 2',
-        data: '00020101021229180014jonhsmith@nbcq52045999530384054031.05802KH5910Jonh Smith6010PHNOM PENH62210117INV-2021-07-65822991700131625713467827630451CF',
+        data: '00020101021229180014jonhsmith@nbcq52045999530384054031.05802KH5910Jonh Smith6010PHNOM PENH62210117INV-2021-07-65822', // 991700131625713467827630451CF
         result: true,
     },
     {
         statement: 'Valid KHQR 3',
-        data: '00020101021230400014jonhsmith@devb01061234560208Dev Bank520459995303840540410.05802KH5910Jonh Smith6010Phnom Penh62360117INV-2021-07-658220211855123456789917001316257134678276304ED60',
+        data: '00020101021230400014jonhsmith@devb01061234560208Dev Bank520459995303840540410.05802KH5910Jonh Smith6010Phnom Penh62360117INV-2021-07-65822021185512345678', // 9917001316257134678276304ED60
         result: true,
     },
     {
         statement: 'Invalid KHQR 4',
-        data: '00020101021230400014jonhsmith@devb01061234560208Dev Bank520459995303840540410.05802KH5910Jonh Smith6010Phnom Penh62360117INV-2021-07-658220211855123456789917001316257134678276304ED60',
+        data: '00020101021230400014jonhsmith@devb01061234560208Dev Bank520459995303840540410.05802KH5910Jonh Smith6010Phnom Penh62360117INV-2021-07-65822021185512345678', // 9917001316257134678276304ED60
         result: true,
     },
     {
         statement: 'Invalid KHQR 5',
-        data: '9917001316257134678276250070201030412340211855854989940117INV-2021-07-658226010PHNOM PENH5910Jonh Smith5802KH540115303840520459992926070412340014jonhsmith@nbcq0102120002016304966B',
+        data: '6250070201030412340211855854989940117INV-2021-07-658226010PHNOM PENH5910Jonh Smith5802KH540115303840520459992926070412340014jonhsmith@nbcq010212000201', // 9917001316257134678276304966B
         result: true,
     },
     {
         statement: 'Invalid KHQR 6',
-        data: '00020101021230400014jonhsmith@devb01061234560208Dev Bank520459995303840540410.05802KH5910Jonh Smith6010Phnom Penh62360117INV-2021-07-658220211855123456789917001316257134678276304ED60',
+        data: '00020101021230400014jonhsmith@devb01061234560208Dev Bank520459995303840540410.05802KH5910Jonh Smith6010Phnom Penh62360117INV-2021-07-65822021185512345678', // 9917001316257134678276304ED60
         result: true,
     },
     {
         statement: 'Invalid KHQR 2',
-        data: '00020101021126200016coffeeklang@pras63045927',
+        data: '00020101021126200016coffeeklang@pras', //63045927
         result: false,
     },
     {
@@ -74,12 +76,12 @@ const testData = [
     },
     {
         statement: 'Invalid KHQR 10',
-        data: '00020101021126150011jonhsmith@nbcq5204599953031165802KH5912Jonh Smith6010Phnom Penh63046D28',
+        data: '00020101021126150011jonhsmith@nbcq5204599953031165802KH5912Jonh Smith6010Phnom Penh', //63046D28
         result: false,
     },
     {
         statement: 'Invalid KHQR 11',
-        data: '00020101021126150011jonhsmith@nbcq5204599953031165802KH5912Jonh Smith6010Phnom Penh63046D',
+        data: '00020101021126150011jonhsmith@nbcq5204599953031165802KH5912Jonh Smith6010Phnom Penh', //63046D
         result: false,
     },
     {
@@ -104,124 +106,135 @@ const testData = [
     },
     {
         statement: 'Valid KHQR 16',
-        data: '00020101021230410015john_smith@devb01061234560208Dev Bank53038405204599954035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#06999170013161343857589263040437',
+        data: '00020101021230410015john_smith@devb01061234560208Dev Bank53038405204599954035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#069', // 99170013161343857589263040437
         result: true,
     },
     {
         statement: 'Invalid KHQR 17',
-        data: '00020101021252045999530384054035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#06999170013161343857589263042494',
+        data: '00020101021252045999530384054035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#069', //99170013161343857589263042494
         result: false,
     },
     {
         statement: 'Invalid KHQR 18',
-        data: '000201010212301900151234567890123456304D807',
+        data: '00020101021230190015123456789012345', //6304D807
         result: false,
     },
     {
         statement: 'Invalid KHQR 19',
-        data: '00020101021230440040123456789012345678901234567890123456789063041747',
+        data: '000201010212304400401234567890123456789012345678901234567890', //63041747
         result: false,
     },
     {
         statement: 'Invalid KHQR 20',
-        data: '000301001021230190015john_smith@devb630493FD',
+        data: '000301001021230190015john_smith@devb', //630493FD
         result: false,
     },
     {
         statement: 'Invalid KHQR 21',
-        data: '01021230190015john_smith@devb52045999530384054035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#06999170013161343857589263044598',
+        data: '01021230190015john_smith@devb52045999530384054035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#069', //99170013161343857589263044598
         result: false,
     },
     {
         statement: 'Invalid KHQR 22',
-        data: '000201010312330190015john_smith@devb63040FC8',
+        data: '000201010312330190015john_smith@devb', //63040FC8
         result: false,
     },
     {
         statement: 'Invalid KHQR 23',
-        data: '00020101021229190015john_smith@devb5203999630454EF',
+        data: '00020101021229190015john_smith@devb5203999', //630454EF
         result: false,
     },
     {
         statement: 'Invalid KHQR 24',
-        data: '00020101021229190015john_smith@devb530384054035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#0699917001316134385758926304F926',
+        data: '00020101021229190015john_smith@devb530384054035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#069', //9917001316134385758926304F926
         result: false,
     },
     {
         statement: 'Invalid KHQR 25',
-        data: '00020101021229190015john_smith@devb52045999530488406304FEA6',
+        data: '00020101021229190015john_smith@devb5204599953048840', //6304FEA6
         result: false,
     },
     {
         statement: 'Invalid KHQR 26',
-        data: '00020101021229190015john_smith@devb5204599954035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#0699917001316134385758926304E7DF',
+        data: '00020101021229190015john_smith@devb5204599954035.05802KH5916john smith actor6010Phnom Penh62150111Invoice#069', //9917001316134385758926304E7DF
         result: false,
     },
     {
         statement: 'Invalid KHQR 27',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05803KKH63042FD2',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05803KKH', //63042FD2
         result: false,
     },
     {
         statement: 'Invalid KHQR 28',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05916john smith actor6010Phnom Penh62150111Invoice#06999170013161343857589263040023',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05916john smith actor6010Phnom Penh62150111Invoice#069', //99170013161343857589263040023
         result: false,
     },
     {
         statement: 'Invalid KHQR 29',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH5916john smith actor60170123456789012345663040EF3',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH5916john smith actor601701234567890123456', //63040EF3
         result: false,
     },
     {
         statement: 'Invalid KHQR 30',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH5916john smith actor600062150111Invoice#0699917001316134385758926304389D',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH5916john smith actor600062150111Invoice#069', //9917001316134385758926304389D
         result: false,
     },
     {
         statement: 'Invalid KHQR 31',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH5916john smith actor62150111Invoice#06999170013161343857589263043B26',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH5916john smith actor62150111Invoice#069', //99170013161343857589263043B26
         result: false,
     },
     {
         statement: 'Invalid KHQR 32',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH59307PL7EvxHpgpP4jT4uMgegaYqgv3Ehb6010Phnom Penh6304399D',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH59307PL7EvxHpgpP4jT4uMgegaYqgv3Ehb6010Phnom Penh', //6304399D
         result: false,
     },
     {
         statement: 'Invalid KHQR 33',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH59006010Phnom Penh630414A7',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH59006010Phnom Penh', //630414A7
         result: false,
     },
     {
         statement: 'Invalid KHQR 34',
-        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH6010Phnom Penh62150111Invoice#06999170013161343857589263043518',
+        data: '00020101021229190015john_smith@devb52045999530384054035.05802KH6010Phnom Penh62150111Invoice#069', //99170013161343857589263043518
         result: false,
     },
     {
         statement: 'Invalid KHQR 35',
-        data: '00020101021229190015john_smith@devb52045999530311654065000.05802KH5910jonh smith6010Phnom Penh622701000313Coffee Klaing0702#29917001316130279727576304D219',
+        data: '00020101021229190015john_smith@devb52045999530311654065000.05802KH5910jonh smith6010Phnom Penh622701000313Coffee Klaing0702#2', //9917001316130279727576304D219
         result: false,
     },
     {
         statement: 'Invalid KHQR 36',
-        data: '00020101021229190015john_smith@devb52045999530311654065000.05802KH5910jonh smith6010Phnom Penh62230109#INV-200303000702#299170013161302797275763049BD2',
+        data: '00020101021229190015john_smith@devb52045999530311654065000.05802KH5910jonh smith6010Phnom Penh62230109#INV-200303000702#2', //99170013161302797275763049BD2
         result: false,
     },
     {
         statement: 'Invalid KHQR 37',
-        data: '00020101021229190015john_smith@devb52045999530311654065000.05802KH5910jonh smith6010Phnom Penh62340109#INV-20030313Coffee Klaing07009917001316130279727576304F593',
+        data: '00020101021229190015john_smith@devb52045999530311654065000.05802KH5910jonh smith6010Phnom Penh62340109#INV-20030313Coffee Klaing0700', //9917001316130279727576304F593
         result: false,
     },
     {
         statement: 'Valid KHQR 38',
-        data: '00020101021229190015john_smith@devb52045999530384954035.05802KH5916john smith actor6010Phnom Penh9917001316134385758926304951E',
+        data: '00020101021229190015john_smith@devb52045999530384954035.05802KH5916john smith actor6010Phnom Penh', //9917001316134385758926304951E
         result: false,
     },
 ];
 
 testData.forEach((data) => {
     test(data.statement, () => {
-        const isValidKHQR = KHQR.verify(data.data);
+        const timestamp = new TimeStamp(
+            EMV.TIMESTAMP_TAG,
+            {
+                creationTimestamp: Date.now(),
+                expirationTimestamp: Date.now() + 60 * 1000,
+            },
+            EMV.DYNAMIC_QR,
+        );
+        let khqr = data.data + timestamp.toString() + EMV.CRC + EMV.CRC_LENGTH;
+        khqr += crc16(khqr);
+        const isValidKHQR = KHQR.verify(khqr);
+
         expect(isValidKHQR.isValid).toBe(data.result);
     });
 });
@@ -284,7 +297,7 @@ const testDataFromFailedDecode = [
     },
     {
         statement: 'Unsupported currency',
-        data: '00020101021229190015john_smith@devb52045999530326254035005802KH5910John Smith6010Phnom Penh62570111Invoice#0690314Coffee Khlaing0709Counter 20807Payment99170013171628493070963048FE2',
+        data: '00020101021230190015john_smith@devb52045999530397854035005802KH5910John Smith6010Phnom Penh62460111Invoice#0690314Coffee Khlaing0709Counter 29917001316140656838196304',
         errorCode: 28,
     },
     {
@@ -358,7 +371,6 @@ testDataFromFailedDecode.forEach((data) => {
     test(data.statement, () => {
         const khqr = data.data + crc16(data.data);
         const decodeResponse = KHQR.verify(khqr);
-
         expect(decodeResponse.isValid).toBe(false);
     });
 });

@@ -10,51 +10,30 @@ export type AdditionalDataParamType = {
     purposeOfTransaction?: string;
 };
 
-type AdditionalDataType = {
-    billNumber?: BillNumber;
-    mobileNumber?: MobileNumber;
-    storeLabel?: StoreLabel;
-    terminalLabel?: TerminalLabel;
-    purposeOfTransaction?: PurposeOfTransaction;
-};
-
 export class AdditionalData extends TagLengthString {
-    billNumber?: BillNumber;
-    mobileNumber?: MobileNumber;
-    storeLabel?: StoreLabel;
-    terminalLabel?: TerminalLabel;
-    purposeOfTransaction?: PurposeOfTransaction;
-    data: AdditionalDataType;
-
     constructor(tag: string, additionalData: AdditionalDataParamType = {}) {
-        let billNumber;
-        let mobileNumber;
-        let storeLabel;
-        let terminalLabel;
-        let purposeOfTransaction;
-
         // Create additional data tag by combine all three sub tags
         let additionalDataString = '';
 
         // note: check like this for compatible with bakong-khqr sdk
         if (additionalData.billNumber !== undefined && additionalData.billNumber !== null) {
-            billNumber = new BillNumber(EMV.BILLNUMBER_TAG, additionalData.billNumber);
+            const billNumber = new BillNumber(EMV.BILLNUMBER_TAG, additionalData.billNumber);
             additionalDataString += billNumber.toString();
         }
         if (additionalData.mobileNumber !== undefined && additionalData.mobileNumber !== null) {
-            mobileNumber = new MobileNumber(EMV.ADDITIONAL_DATA_FIELD_MOBILE_NUMBER, additionalData.mobileNumber);
+            const mobileNumber = new MobileNumber(EMV.ADDITIONAL_DATA_FIELD_MOBILE_NUMBER, additionalData.mobileNumber);
             additionalDataString += mobileNumber.toString();
         }
         if (additionalData.storeLabel !== undefined && additionalData.storeLabel !== null) {
-            storeLabel = new StoreLabel(EMV.STORELABEL_TAG, additionalData.storeLabel);
+            const storeLabel = new StoreLabel(EMV.STORELABEL_TAG, additionalData.storeLabel);
             additionalDataString += storeLabel.toString();
         }
         if (additionalData.terminalLabel !== undefined && additionalData.terminalLabel !== null) {
-            terminalLabel = new TerminalLabel(EMV.TERMINAL_TAG, additionalData.terminalLabel);
+            const terminalLabel = new TerminalLabel(EMV.TERMINAL_TAG, additionalData.terminalLabel);
             additionalDataString += terminalLabel.toString();
         }
         if (additionalData.purposeOfTransaction !== undefined && additionalData.purposeOfTransaction !== null) {
-            purposeOfTransaction = new PurposeOfTransaction(
+            const purposeOfTransaction = new PurposeOfTransaction(
                 EMV.PURPOSE_OF_TRANSACTION,
                 additionalData.purposeOfTransaction,
             );
@@ -62,20 +41,6 @@ export class AdditionalData extends TagLengthString {
         }
 
         super(tag, additionalDataString);
-
-        // class inherit the billNumber, storeLabel, terminalLabel
-        this.billNumber = billNumber;
-        this.mobileNumber = mobileNumber;
-        this.storeLabel = storeLabel;
-        this.terminalLabel = terminalLabel;
-        this.purposeOfTransaction = purposeOfTransaction;
-        this.data = {
-            billNumber,
-            mobileNumber,
-            storeLabel,
-            terminalLabel,
-            purposeOfTransaction,
-        };
     }
 }
 

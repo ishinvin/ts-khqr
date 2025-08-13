@@ -41,6 +41,8 @@ export const EMV = Object.freeze({
     TERMINAL_TAG: '07',
     PURPOSE_OF_TRANSACTION: '08',
     TIMESTAMP_TAG: '99',
+    CREATION_TIMESTAMP: '00',
+    EXPIRATION_TIMESTAMP: '01',
     MERCHANT_INFORMATION_LANGUAGE_TEMPLATE: '64',
     LANGUAGE_PREFERENCE: '00',
     MERCHANT_NAME_ALTERNATE_LANGUAGE: '01',
@@ -254,6 +256,38 @@ export const ERROR_CODE = Object.freeze({
         code: 43,
         message: 'Upi Account Information Length is invalid',
     },
+    UPI_ACCOUNT_INFORMATION_INVALID_CURRENCY: {
+        code: 44,
+        message: 'Upi Account Information Length does not accept USD',
+    },
+    EXPIRATION_TIMESTAMP_REQUIRED: {
+        code: 45,
+        message: 'Expiration timestamp is required for dynamic KHQR',
+    },
+    KHQR_EXPIRED: {
+        code: 46,
+        message: 'This dynamic KHQR has expired',
+    },
+    INVALID_DYNAMIC_KHQR: {
+        code: 47,
+        message: 'This dynamic KHQR has invalid field transaction amount',
+    },
+    POINT_OF_INITIATION_METHOD_INVALID: {
+        code: 48,
+        message: 'Point of Initiation Method is invalid',
+    },
+    EXPIRATION_TIMESTAMP_LENGTH_INVALID: {
+        code: 49,
+        message: 'Expiration timestamp length is invalid',
+    },
+    EXPIRATION_TIMESTAMP_IN_THE_PAST: {
+        code: 50,
+        message: 'Expiration timestamp is in the past',
+    },
+    INVALID_MERCHANT_CATEGORY_CODE: {
+        code: 51,
+        message: 'Invalid merchant category code',
+    },
 });
 
 export type KHQRTagType = {
@@ -342,6 +376,7 @@ export const KHQR_TAG: KHQRTagType[] = [
     },
     {
         tag: '99',
+        sub: true,
         type: 'timestamp',
         required: false,
         instance: TimeStamp,
@@ -387,6 +422,13 @@ export const KHQR_SUBTAG = Object.freeze({
                 languagePreference: null,
                 merchantNameAlternateLanguage: null,
                 merchantCityAlternateLanguage: null,
+            },
+        },
+        {
+            tag: '99',
+            data: {
+                creationTimestamp: null,
+                expirationTimestamp: null,
             },
         },
     ],
@@ -446,184 +488,189 @@ export const KHQR_SUBTAG = Object.freeze({
             subTag: EMV.MERCHANT_CITY_ALTERNATE_LANGUAGE,
             name: 'merchantCityAlternateLanguage',
         },
+        {
+            tag: '99',
+            subTag: EMV.CREATION_TIMESTAMP,
+            name: 'creationTimestamp',
+        },
+        {
+            tag: '99',
+            subTag: EMV.EXPIRATION_TIMESTAMP,
+            name: 'expirationTimestamp',
+        },
     ],
 });
 
-type CurrencyKey =
-    | 'USD'
-    | 'KHR'
-    | 'THB'
-    | 'LAK'
-    | 'VND'
-    | 'MYR'
-    | 'MMK'
-    | 'BND'
-    | 'PHP'
-    | 'SGD'
-    | 'IDR'
-    | 'INR'
-    | 'CNY'
-    | 'AUD'
-    | 'CZK'
-    | 'EUR';
+type CurrencyKey = 'USD' | 'KHR';
+// | 'THB'
+// | 'LAK'
+// | 'VND'
+// | 'MYR'
+// | 'MMK'
+// | 'BND'
+// | 'PHP'
+// | 'SGD'
+// | 'IDR'
+// | 'INR'
+// | 'CNY'
+// | 'AUD'
+// | 'CZK'
+// | 'EUR';
 export const CURRENCY: { [K in CurrencyKey]: string } = Object.freeze({
     USD: '840',
     KHR: '116',
-    THB: '764',
-    LAK: '418',
-    VND: '704',
-    MYR: '458',
-    MMK: '104',
-    BND: '096',
-    PHP: '608',
-    SGD: '702',
-    IDR: '360',
-    INR: '356',
-    CNY: '156',
-    AUD: '036',
-    CZK: '203',
-    EUR: '978',
+    // THB: '764',
+    // LAK: '418',
+    // VND: '704',
+    // MYR: '458',
+    // MMK: '104',
+    // BND: '096',
+    // PHP: '608',
+    // SGD: '702',
+    // IDR: '360',
+    // INR: '356',
+    // CNY: '156',
+    // AUD: '036',
+    // CZK: '203',
+    // EUR: '978',
 });
 
+// | 'LA'
+//     | 'VN'
+//     | 'MY'
+//     | 'MM'
+//     | 'BN'
+//     | 'PH'
+//     | 'SG'
+//     | 'ID'
+//     | 'IN'
+//     | 'CN'
+//     | 'AU'
+//     | 'CZ'
+//     | 'FR'
 export const COUNTRY: {
-    [K in
-        | 'KH'
-        | 'TH'
-        | 'LA'
-        | 'VN'
-        | 'MY'
-        | 'MM'
-        | 'BN'
-        | 'PH'
-        | 'SG'
-        | 'ID'
-        | 'IN'
-        | 'CN'
-        | 'AU'
-        | 'CZ'
-        | 'FR']: string;
+    [K in 'KH']: string;
 } = Object.freeze({
     KH: 'KH',
-    TH: 'TH',
-    LA: 'LA',
-    VN: 'VN',
-    MY: 'MY',
-    MM: 'MM',
-    BN: 'BN',
-    PH: 'PH',
-    SG: 'SG',
-    ID: 'ID',
-    IN: 'IN',
-    CN: 'CN',
-    AU: 'AU',
-    CZ: 'CZ',
-    FR: 'FR',
+    // TH: 'TH',
+    // LA: 'LA',
+    // VN: 'VN',
+    // MY: 'MY',
+    // MM: 'MM',
+    // BN: 'BN',
+    // PH: 'PH',
+    // SG: 'SG',
+    // ID: 'ID',
+    // IN: 'IN',
+    // CN: 'CN',
+    // AU: 'AU',
+    // CZ: 'CZ',
+    // FR: 'FR',
 });
 
-type TagKey =
-    | 'MERCHANT'
-    | 'INDIVIDUAL'
-    | 'TAG_02'
-    | 'TAG_03'
-    | 'TAG_04'
-    | 'TAG_05'
-    | 'TAG_06'
-    | 'TAG_07'
-    | 'TAG_08'
-    | 'TAG_09'
-    | 'TAG_10'
-    | 'TAG_11'
-    | 'TAG_12'
-    | 'TAG_13'
-    | 'TAG_14'
-    | 'TAG_15'
-    | 'TAG_16'
-    | 'TAG_17'
-    | 'TAG_18'
-    | 'TAG_19'
-    | 'TAG_20'
-    | 'TAG_21'
-    | 'TAG_22'
-    | 'TAG_23'
-    | 'TAG_24'
-    | 'TAG_25'
-    | 'TAG_26'
-    | 'TAG_27'
-    | 'TAG_28'
-    | 'TAG_29'
-    | 'TAG_30'
-    | 'TAG_31'
-    | 'TAG_32'
-    | 'TAG_33'
-    | 'TAG_34'
-    | 'TAG_35'
-    | 'TAG_36'
-    | 'TAG_37'
-    | 'TAG_38'
-    | 'TAG_39'
-    | 'TAG_40'
-    | 'TAG_41'
-    | 'TAG_42'
-    | 'TAG_43'
-    | 'TAG_44'
-    | 'TAG_45'
-    | 'TAG_46'
-    | 'TAG_47'
-    | 'TAG_48'
-    | 'TAG_49'
-    | 'TAG_50'
-    | 'TAG_51';
+type TagKey = 'MERCHANT' | 'INDIVIDUAL';
+// | 'TAG_02'
+// | 'TAG_03'
+// | 'TAG_04'
+// | 'TAG_05'
+// | 'TAG_06'
+// | 'TAG_07'
+// | 'TAG_08'
+// | 'TAG_09'
+// | 'TAG_10'
+// | 'TAG_11'
+// | 'TAG_12'
+// | 'TAG_13'
+// | 'TAG_14'
+// | 'TAG_15'
+// | 'TAG_16'
+// | 'TAG_17'
+// | 'TAG_18'
+// | 'TAG_19'
+// | 'TAG_20'
+// | 'TAG_21'
+// | 'TAG_22'
+// | 'TAG_23'
+// | 'TAG_24'
+// | 'TAG_25'
+// | 'TAG_26'
+// | 'TAG_27'
+// | 'TAG_28'
+// | 'TAG_29'
+// | 'TAG_30'
+// | 'TAG_31'
+// | 'TAG_32'
+// | 'TAG_33'
+// | 'TAG_34'
+// | 'TAG_35'
+// | 'TAG_36'
+// | 'TAG_37'
+// | 'TAG_38'
+// | 'TAG_39'
+// | 'TAG_40'
+// | 'TAG_41'
+// | 'TAG_42'
+// | 'TAG_43'
+// | 'TAG_44'
+// | 'TAG_45'
+// | 'TAG_46'
+// | 'TAG_47'
+// | 'TAG_48'
+// | 'TAG_49'
+// | 'TAG_50'
+// | 'TAG_51';
+
 export const TAG: { [K in TagKey]: string } = Object.freeze({
     MERCHANT: '30',
     INDIVIDUAL: '29',
-    TAG_02: '02',
-    TAG_03: '03',
-    TAG_04: '04',
-    TAG_05: '05',
-    TAG_06: '06',
-    TAG_07: '07',
-    TAG_08: '08',
-    TAG_09: '09',
-    TAG_10: '10',
-    TAG_11: '11',
-    TAG_12: '12',
-    TAG_13: '13',
-    TAG_14: '14',
-    TAG_15: '15',
-    TAG_16: '16',
-    TAG_17: '17',
-    TAG_18: '18',
-    TAG_19: '19',
-    TAG_20: '20',
-    TAG_21: '21',
-    TAG_22: '22',
-    TAG_23: '23',
-    TAG_24: '24',
-    TAG_25: '25',
-    TAG_26: '26',
-    TAG_27: '27',
-    TAG_28: '28',
-    TAG_29: '29',
-    TAG_30: '30',
-    TAG_31: '31',
-    TAG_32: '32',
-    TAG_33: '33',
-    TAG_34: '34',
-    TAG_35: '35',
-    TAG_36: '36',
-    TAG_37: '37',
-    TAG_38: '38',
-    TAG_39: '39',
-    TAG_40: '40',
-    TAG_41: '41',
-    TAG_42: '42',
-    TAG_43: '43',
-    TAG_44: '44',
-    TAG_45: '45',
-    TAG_46: '46',
-    TAG_47: '47',
-    TAG_48: '48',
-    TAG_49: '49',
-    TAG_50: '50',
-    TAG_51: '51',
+    // TAG_02: '02',
+    // TAG_03: '03',
+    // TAG_04: '04',
+    // TAG_05: '05',
+    // TAG_06: '06',
+    // TAG_07: '07',
+    // TAG_08: '08',
+    // TAG_09: '09',
+    // TAG_10: '10',
+    // TAG_11: '11',
+    // TAG_12: '12',
+    // TAG_13: '13',
+    // TAG_14: '14',
+    // TAG_15: '15',
+    // TAG_16: '16',
+    // TAG_17: '17',
+    // TAG_18: '18',
+    // TAG_19: '19',
+    // TAG_20: '20',
+    // TAG_21: '21',
+    // TAG_22: '22',
+    // TAG_23: '23',
+    // TAG_24: '24',
+    // TAG_25: '25',
+    // TAG_26: '26',
+    // TAG_27: '27',
+    // TAG_28: '28',
+    // TAG_29: '29',
+    // TAG_30: '30',
+    // TAG_31: '31',
+    // TAG_32: '32',
+    // TAG_33: '33',
+    // TAG_34: '34',
+    // TAG_35: '35',
+    // TAG_36: '36',
+    // TAG_37: '37',
+    // TAG_38: '38',
+    // TAG_39: '39',
+    // TAG_40: '40',
+    // TAG_41: '41',
+    // TAG_42: '42',
+    // TAG_43: '43',
+    // TAG_44: '44',
+    // TAG_45: '45',
+    // TAG_46: '46',
+    // TAG_47: '47',
+    // TAG_48: '48',
+    // TAG_49: '49',
+    // TAG_50: '50',
+    // TAG_51: '51',
 });

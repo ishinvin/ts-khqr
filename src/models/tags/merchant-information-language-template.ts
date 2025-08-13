@@ -8,34 +8,19 @@ export type MerchantInformationLanguageTemplateParams = {
     merchantCityAlternateLanguage?: string;
 };
 
-type MerchantInformationLanguageTemplateType = {
-    languagePreference?: LanguagePreference;
-    merchantNameAlternateLanguage?: MerchantCityAlternateLanguage;
-    merchantCityAlternateLanguage?: MerchantCityAlternateLanguage;
-};
-
 export class MerchantInformationLanguageTemplate extends TagLengthString {
-    languagePreference?: LanguagePreference;
-    merchantNameAlternateLanguage?: MerchantCityAlternateLanguage;
-    merchantCityAlternateLanguage?: MerchantCityAlternateLanguage;
-    data: MerchantInformationLanguageTemplateType;
-
     constructor(tag: string, obj: MerchantInformationLanguageTemplateParams = {}) {
-        let languagePreference;
-        let merchantNameAlternateLanguage;
-        let merchantCityAlternateLanguage;
-
         if (obj.languagePreference && !obj.merchantNameAlternateLanguage) {
             throw response(null, ERROR_CODE.MERCHANT_NAME_ALTERNATE_LANGUAGE_REQUIRED);
         }
 
         let merchantInformationLanguageTemplateString = '';
 
-        languagePreference = new LanguagePreference(EMV.LANGUAGE_PREFERENCE, obj.languagePreference);
+        const languagePreference = new LanguagePreference(EMV.LANGUAGE_PREFERENCE, obj.languagePreference);
         merchantInformationLanguageTemplateString += languagePreference.toString();
 
         if (obj.merchantNameAlternateLanguage !== undefined && obj.merchantNameAlternateLanguage !== null) {
-            merchantNameAlternateLanguage = new MerchantNameAlternateLanguage(
+            const merchantNameAlternateLanguage = new MerchantNameAlternateLanguage(
                 EMV.MERCHANT_NAME_ALTERNATE_LANGUAGE,
                 obj.merchantNameAlternateLanguage,
             );
@@ -43,7 +28,7 @@ export class MerchantInformationLanguageTemplate extends TagLengthString {
         }
 
         if (obj.merchantCityAlternateLanguage !== undefined && obj.merchantCityAlternateLanguage !== null) {
-            merchantCityAlternateLanguage = new MerchantCityAlternateLanguage(
+            const merchantCityAlternateLanguage = new MerchantCityAlternateLanguage(
                 EMV.MERCHANT_CITY_ALTERNATE_LANGUAGE,
                 obj.merchantCityAlternateLanguage,
             );
@@ -51,12 +36,6 @@ export class MerchantInformationLanguageTemplate extends TagLengthString {
         }
 
         super(tag, merchantInformationLanguageTemplateString);
-
-        this.data = {
-            languagePreference,
-            merchantNameAlternateLanguage,
-            merchantCityAlternateLanguage,
-        };
     }
 }
 

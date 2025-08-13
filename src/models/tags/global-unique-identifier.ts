@@ -10,20 +10,7 @@ export type GlobalUniqueIdObjectType = {
     isMerchant: boolean;
 };
 
-type GlobalUniqueIdDataType = {
-    bakongAccountID: BakongAccountID;
-    merchantID?: MerchantID;
-    acquiringBank?: AcquiringBank;
-    accountInformation?: string;
-};
-
 export class GlobalUniqueIdentifier extends TagLengthString {
-    merchantID?: MerchantID;
-    acquiringBank?: AcquiringBank;
-    accountInformation?: string;
-    bakongAccountID: BakongAccountID;
-    data: GlobalUniqueIdDataType;
-
     constructor(tag: string, obj: GlobalUniqueIdObjectType) {
         if (!obj || typeof obj !== 'object') {
             throw response(null, ERROR_CODE.MERCHANT_TYPE_REQUIRED);
@@ -47,16 +34,6 @@ export class GlobalUniqueIdentifier extends TagLengthString {
             if (obj.acquiringBank !== undefined && obj.acquiringBank !== null) {
                 globalUniqueIdentifier += acquiringBank.toString();
             }
-
-            super(tag, globalUniqueIdentifier);
-
-            this.merchantID = merchantID;
-            this.acquiringBank = acquiringBank;
-            this.data = {
-                bakongAccountID,
-                merchantID,
-                acquiringBank,
-            };
         } else {
             // note: check like this for compatible with bakong-khqr sdk
             if (!StringUtils.isEmpty(obj.accountInformation)) {
@@ -74,16 +51,8 @@ export class GlobalUniqueIdentifier extends TagLengthString {
                 );
                 globalUniqueIdentifier += acquiringBank.toString();
             }
-
-            super(tag, globalUniqueIdentifier);
-
-            this.accountInformation = obj.accountInformation;
-            this.data = {
-                bakongAccountID,
-                accountInformation: obj.accountInformation,
-            };
         }
-        this.bakongAccountID = bakongAccountID;
+        super(tag, globalUniqueIdentifier);
     }
 }
 

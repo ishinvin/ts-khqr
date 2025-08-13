@@ -1,5 +1,5 @@
-import { KHQR_SUBTAG, KHQR_TAG, type KHQRTagType } from './constants';
-import { StringUtils } from './utils';
+import { EMV, ERROR_CODE, KHQR_SUBTAG, KHQR_TAG, type KHQRTagType } from './constants';
+import { response, StringUtils } from './utils';
 
 const cloneObject = (obj: any) => JSON.parse(JSON.stringify(obj));
 
@@ -31,6 +31,21 @@ export function verifyQR(qrString: string) {
         lastTag = tag;
     }
 
+    // tag pointofInitiationMethod 01, dynamic khqr 12
+    if (tags.some((item) => item.tag === '01' && item.value === '12')) {
+        if (!tags.some((item) => item.tag === '54')) {
+            throw response(null, ERROR_CODE.INVALID_DYNAMIC_KHQR);
+        }
+        if (!tags.some((item) => item.tag === '99')) {
+            throw response(null, ERROR_CODE.EXPIRATION_TIMESTAMP_REQUIRED);
+        }
+    }
+
+    // check required timestamp for dynamic KHQR (tag amount 54, tag timestamp 99)
+    if (tags.some((item) => item.tag === '54') && !tags.some((item) => item.tag === '99')) {
+        throw response(null, ERROR_CODE.EXPIRATION_TIMESTAMP_REQUIRED);
+    }
+
     // check required tag and throw invalid
     if (requiredTags.length > 0) {
         const requiredTag = requiredTags[0];
@@ -41,6 +56,7 @@ export function verifyQR(qrString: string) {
         }
     }
 
+    let poi: String | undefined;
     tags.forEach((khqrTag) => {
         const { tag } = khqrTag;
         let { value } = khqrTag;
@@ -48,6 +64,9 @@ export function verifyQR(qrString: string) {
         let inputValue = value;
 
         if (khqr) {
+            if (tag === EMV.POINT_OF_INITIATION_METHOD) {
+                poi = value;
+            }
             if (subTags.includes(tag)) {
                 const subTagInput = KHQR_SUBTAG.input.find((item) => item.tag === tag);
                 if (subTagInput) {
@@ -73,7 +92,11 @@ export function verifyQR(qrString: string) {
                         }
                         value = slicedsubtag;
                     }
-                    new khqr.instance(tag, inputValue);
+                    if (tag === EMV.TIMESTAMP_TAG) {
+                        new khqr.instance(tag, inputValue, poi);
+                    } else {
+                        new khqr.instance(tag, inputValue);
+                    }
                 }
             } else {
                 new khqr.instance(tag, inputValue);

@@ -33,6 +33,8 @@ export type QRPayload = {
     amount?: number;
     upiMerchantAccount?: string;
     countryCode?: string;
+    merchantCategoryCode?: string;
+    expirationTimestamp?: number;
     additionalData?: AdditionalDataParamType;
     languageData?: MerchantInformationLanguageTemplateParams;
 };
@@ -79,13 +81,9 @@ export function generateQR(payload: QRPayload): ReturnType<ResponseResult | null
         }
         // tag MID 26-51
         const globalUniqueIdentifier = new GlobalUniqueIdentifier(payload.tag, merchantInfo);
-        // tag 52
-        const merchantCategoryCode = new MerchantCategoryCode(
-            EMV.MERCHANT_CATEGORY_CODE,
-            EMV.DEFAULT_MERCHANT_CATEGORY_CODE,
-        );
 
         const {
+            merchantCategoryCode = EMV.DEFAULT_MERCHANT_CATEGORY_CODE,
             countryCode = EMV.DEFAULT_COUNTRY_CODE,
             merchantCity = EMV.DEFAULT_MERCHANT_CITY,
             currency = CURRENCY.KHR,
@@ -93,16 +91,21 @@ export function generateQR(payload: QRPayload): ReturnType<ResponseResult | null
             languageData,
         } = payload;
 
+        // tag 52
+        const merchantCategory = new MerchantCategoryCode(EMV.MERCHANT_CATEGORY_CODE, merchantCategoryCode);
+
         // tag 53
         const trxnCurrency = new TransactionCurrency(EMV.TRANSACTION_CURRENCY, currency);
+
+        if (currency === CURRENCY.USD && upi) throw response(null, ERROR_CODE.UPI_ACCOUNT_INFORMATION_INVALID_CURRENCY);
 
         // Array of KHQR tags to loop and get the string of tags
         const KHQRInstances = [
             payloadFormatIndicator,
             pointOfInitiationMethod,
-            upi || '',
+            ...(upi ? [upi] : []),
             globalUniqueIdentifier,
-            merchantCategoryCode,
+            merchantCategory,
             trxnCurrency,
         ];
 
@@ -156,7 +159,21 @@ export function generateQR(payload: QRPayload): ReturnType<ResponseResult | null
         }
 
         // tag 99
-        KHQRInstances.push(new TimeStamp(EMV.TIMESTAMP_TAG));
+        if (QRType === EMV.DYNAMIC_QR) {
+            if (!payload.expirationTimestamp) {
+                throw response(null, ERROR_CODE.EXPIRATION_TIMESTAMP_REQUIRED);
+            }
+            KHQRInstances.push(
+                new TimeStamp(
+                    EMV.TIMESTAMP_TAG,
+                    {
+                        creationTimestamp: Date.now(),
+                        expirationTimestamp: payload.expirationTimestamp,
+                    },
+                    QRType,
+                ),
+            );
+        }
 
         let khqrNoCrc = '';
         KHQRInstances.forEach((item) => {
