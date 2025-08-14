@@ -134,6 +134,4 @@ Output:
 
 <br>
 
-#### Buy Me a Coffee
-
-https://ishinvin.github.io/qrcode-vue/
+Buy Me a Coffee: [KHQR](https://ishinvin.github.io/img/khqr.jpg)
