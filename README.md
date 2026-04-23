@@ -84,6 +84,36 @@ console.log(isKHQR);
 // true
 ```
 
+### Verify KHQR with error detail
+
+Use `verifyDetail` when you want the reason a QR is invalid (error code and message) in addition to the `isValid` flag.
+
+```js
+import { KHQR } from 'ts-khqr';
+
+const result = KHQR.verifyDetail(khqrString);
+
+console.log(result);
+```
+
+Output (valid QR):
+
+```js
+{
+  status: { code: 0, errorCode: null, message: null },
+  data: { isValid: true }
+}
+```
+
+Output (invalid / expired QR):
+
+```js
+{
+  status: { code: 1, errorCode: 46, message: 'This dynamic KHQR has expired' },
+  data: { isValid: false }
+}
+```
+
 ### Parse KHQR
 
 ```js
