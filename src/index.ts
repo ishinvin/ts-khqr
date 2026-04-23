@@ -12,10 +12,13 @@ export class KHQR {
     }
 
     static verify(qrString: string): { isValid: boolean } {
-        // Check CRC
+        return { isValid: KHQR.verifyDetail(qrString).status.code === 0 };
+    }
+
+    static verifyDetail(qrString: string): ReturnType<{ isValid: boolean }> {
         const crcRegExp = /6304[A-Fa-f0-9]{4}$/;
         if (!crcRegExp.test(qrString)) {
-            return { isValid: false };
+            return response({ isValid: false }, ERROR_CODE.KHQR_INVALID);
         }
 
         const crc = qrString.slice(-4);
@@ -27,9 +30,13 @@ export class KHQR {
                 throw response(null, ERROR_CODE.KHQR_INVALID);
             }
             verifyQR(qrString);
-            return { isValid: true };
+            return response({ isValid: true });
         } catch (error) {
-            return { isValid: false };
+            const status = (error as ReturnType<null> | undefined)?.status;
+            if (status?.errorCode != null && status.message != null) {
+                return response({ isValid: false }, { code: status.errorCode, message: status.message });
+            }
+            return response({ isValid: false }, ERROR_CODE.KHQR_INVALID);
         }
     }
 
